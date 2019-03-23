@@ -1,49 +1,98 @@
+#include<stdio.h>
+#include<cstring>
+#include<string.h>
 #include<iostream>
 #include<fstream>
+#include<vector>
+#include<string>
+#include<sstream>
 using namespace std;
- 
+struct carInfo{
+	string line;
+	int carId;
+	int carFrom;
+	int carTo;
+	int carHighspeed;
+	int carPlantime;
+};
+
 int main()
 {
+
+    int i,j,k=5;
+    int a[10];
     ifstream fin("inputcar.txt",ios::in);
     ofstream fout("answer.txt");
     if(!fin)
     {
-        cout<<"inputcar can not open"<<endl;
+        cout<<"inputcar can not open"<<endl;//panduan wenjian shifou dakai
     }
-    int a[100];  //距离
-    int n,k;
-    fin>>n>>k;
-    for(int i=0;i<k+1;i++)
-        fin>>a[i];
-    int sum=0;   //加油次数
-    int k1=0;      //加油后的里程数
-    for(int i=0;i<k+1;i++)
-        if(a[i]>n)
-        {
-            fout<<"No Solution";
-            return -1;
-        }
-    for(int i=0;i<k+1;i++)
+    int cardata[100];//che 5ge shuju
+    string stem;//yueguo di yi hang
+    string s;//duru shuju字符串
+    getline(fin,stem);//hulue di yi hang #
+
+    vector<carInfo>car;//car de dong tai jie gou ti shuzui
+    
+
+    while(getline(fin,s))//zhuhang durushuju
     {
-        k1+=a[i];
-        if(k1>n)
-        {
-            sum++;
-            k1=a[i];
-        }
+	    
+	    carInfo info;//lin shi liang
+	    info.line="sd";
+	    info.line=s;//
+	    char * z=(char*)s.data();
+	    const char *d= " ,()";
+	    char *p;
+	    p=strtok(z,d);
+	    i=1;
+	    while(p){
+//字符串中取出数字
+                    stringstream ss;
+		    ss<<p;
+		    ss>>a[i];
+		    i++;
+		    p=strtok(NULL,d);
+	    }
+	    //字符串中取出数字
+	    info.carId=a[1];
+	    info.carFrom=a[2];
+	    info.carTo=a[3];
+	    info.carHighspeed=a[4];
+	    info.carPlantime=a[5];
+
+	    cout<<info.line<<endl;
+	    car.push_back(info);
+	   // cout<<s<<endl;
     }
-    fout<<"#停靠的加油站(carId,StartTime,RoadId...)"<<endl;
-    k1=0;
-    for(int i=0;i<k+1;i++)
+
+//ceshi jiegouti fangwen 
+    for(i=0;i<=15;i++){
+	    cout<<car[i].carId<<' '<<car[i].carFrom<<' '<<car[i].carTo<<' '<<car[i].carHighspeed<<' '<<car[i].carPlantime<<endl;
+//	   cout<<car[i].line<<endl;
+
+    }
+
+    cout<<endl;
+cout<<car[10].line<<endl;	    
+
+    //duru shuju 
+    //for(i=1;i<=k;i++)
+    //      fin>>cardata[i];
+
+
+
+    //lujing shuchu
+    fout<<"#(carId,StartTime,RoadId...)"<<endl;
+    for(int i=1;i<=k;i++)
     {
-        k1+=a[i];
-        if(k1>n)
-        {
-            k1=a[i];
-            fout<<'('<<i<<','<<')'<<endl;
-        }
+	   
+          fout<<'('<<cardata[i]<<','<<')'<<endl;
+	    
     }
     fout<<endl;
+
+    //guanbi wenjian
     fout.close();
     fin.close();
     return 0;
