@@ -156,10 +156,44 @@ int main(int argc,char *argv[])
             roadNum++;//road number + 1, total carNum;
     }
 
+//read cross data
+    getline(crossDatain,stem);//hulue di yi hang #
+    vector<crossInfo>cross;//car de dong tai jie gou ti shuzui
+    while(getline(crossDatain,s))// read the data line by line
+    {
+
+            crossInfo info;//lin shi liang
+//          info.line="sd";//the line first
+//          info.line=s;//read the string by line to line
+            //字符串中取出数字
+            char * z=(char*)s.data();
+            const char *d= " ,()";//fen ge fu
+            char *p;
+            p=strtok(z,d);
+            i=1;
+            while(p){
+                    //transform string to number
+                    stringstream ss;
+                    ss<<p;
+                    ss>>a[i];
+                    i++;
+                    p=strtok(NULL,d);
+            }
+            //字符串中取出数字
+            info.crossId=a[1];//road id
+            info.crossRoadid_1=a[2];//cross road 1 -roadId
+            info.crossRoadid_2=a[3];//cross road 2 -roadId
+            info.crossRoadid_3=a[4];//cross road 3 -roadId
+            info.crossRoadid_4=a[5];//cross road 4 -roadId
+            
+            cross.push_back(info);// push_back to car
+            // cout<<s<<endl;//know if the s line has in the info,line
+            crossNum++;//cross number + 1, total crossNum;
+    }
 
 
 
-//ceshi jiegouti fangwen 
+//ceshi the car
     for(i=0;i<carNum;i++){
 	    cout<<car[i].carId<<' '<<car[i].carFrom<<' '<<car[i].carTo<<' ';
             cout<< car[i].carHighspeed<<' '<<car[i].carPlantime<<endl;
@@ -170,6 +204,12 @@ int main(int argc,char *argv[])
     for(i=0;i<roadNum;i++){
             cout<<road[i].roadId<<' '<<road[i].roadLength<<' '<<road[i].roadHighspeed<<' ';
             cout<< road[i].roadChannel<<' '<<road[i].roadFrom<<' '<<road[i].roadTo<<' '<<road[i].roadIsduplex<<endl;
+//          cout<<car[i].line<<endl;
+    }
+//ceshi the cross
+    for(i=0;i<crossNum;i++){
+            cout<<cross[i].crossId<<' '<<cross[i].crossRoadid_1<<' '<<cross[i].crossRoadid_2<<' ';
+            cout<<cross[i].crossRoadid_3<<' '<<cross[i].crossRoadid_4<<endl;
 //          cout<<car[i].line<<endl;
     }
 
