@@ -1,3 +1,4 @@
+// run code ./CodeCraft-2019 ../config/car.txt ../config/road.txt ../config/cross.txt  ../config/answer.txt
 #include<stdio.h>
 #include<cstring>
 #include<string.h>
@@ -7,6 +8,7 @@
 #include<string>
 #include<sstream>
 using namespace std;
+//car data
 struct carInfo{
 //	string line;// read the line by line
 	int carId;// car id
@@ -15,6 +17,27 @@ struct carInfo{
 	int carHighspeed;//car high speed
 	int carPlantime;//car plan time
 };
+
+//road data
+struct roadInfo{
+	int roadId;//road id
+	int roadLength;//length
+	int roadHighspeed;//speed
+	int roadChannel;//channel
+	int roadFrom;//from
+	int roadTo;//to
+	int roadIsduplex;//isduplex
+};
+
+//cross data
+struct crossInfo{
+	int crossId;//cross id
+	int crossRoadid_1;//roadId
+	int crossRoadid_2;//roadId
+	int crossRoadid_3;//roadId
+	int crossRoadid_4;//roadId
+};
+
 
 int main(int argc,char *argv[])
 {
