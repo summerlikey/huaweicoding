@@ -202,6 +202,7 @@ int main(int argc,char *argv[])
 			    crossMap[i][j]=inf;
 	    }
     }
+/*    
     for(i=1;i<=crossNum;i++)
     {
 	    for(j=1;j<=crossNum;j++)
@@ -255,13 +256,20 @@ int main(int argc,char *argv[])
 
 	    }
     }
+*/
     //is duplex? if is then the map will be inf=99999999
     for(i=0;i<roadNum;i++)
     {
-	    if(road[i].roadIsduplex==0)
+	    if(road[i].roadIsduplex==1)
+	    {
+		    crossMap[road[i].roadFrom][road[i].roadTo]=road[i].roadLength;
+		    crossMap[road[i].roadTo][road[i].roadFrom]=road[i].roadLength;
+	    }
+	    else
+	    {
+		    crossMap[road[i].roadFrom][road[i].roadTo]=road[i].roadLength;
 		    crossMap[road[i].roadTo][road[i].roadFrom]=inf;
-
-    
+	    }
     }
     for(i=1;i<=crossNum;i++)
     {
