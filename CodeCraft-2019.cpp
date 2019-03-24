@@ -193,15 +193,21 @@ int main(int argc,char *argv[])
     int inf=99999999;//can not arrive
     int crossMap[101][101];// biao shi daobuliao
     for(i=1;i<=crossNum;i++)
+    {
 	    for(j=1;j<=crossNum;j++)
+	    {
 		    if(i==j)
 			    crossMap[i][j]=0;
 		    else
 			    crossMap[i][j]=inf;
+	    }
+    }
     for(i=1;i<=crossNum;i++)
     {
 	    for(j=1;j<=crossNum;j++)
 	    {
+		 if(i==j)
+			 continue;
 		 if(cross[i].crossRoadid_1!=-1)
 		    {
 		       if(cross[i].crossRoadid_1==cross[j].crossRoadid_1)
