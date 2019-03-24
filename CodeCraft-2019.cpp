@@ -190,8 +190,14 @@ int main(int argc,char *argv[])
             // cout<<s<<endl;//know if the s line has in the info,line
             crossNum++;//cross number + 1, total crossNum;
     }
-
-    int crossMap[101][101]={99999999};// biao shi daobuliao
+    int inf=99999999;//can not arrive
+    int crossMap[101][101];// biao shi daobuliao
+    for(i=1;i<=crossNum;i++)
+	    for(j=1;j<=crossNum;j++)
+		    if(i==j)
+			    crossMap[i][j]=0;
+		    else
+			    crossMap[i][j]=inf;
     for(i=1;i<=crossNum;i++)
     {
 	    for(j=1;j<=crossNum;j++)
@@ -242,6 +248,20 @@ int main(int argc,char *argv[])
                     }
 
 	    }
+    }
+    //is duplex? if is then the map will be inf=99999999
+    for(i=0;i<roadNum;i++)
+    {
+	    if(road[i].roadIsduplex==0)
+		    crossMap[road[i].roadTo][road[i].roadFrom]=inf;
+
+    
+    }
+    for(i=1;i<=crossNum;i++)
+    {
+	    for(j=1;j<=crossNum;j++)
+		    answerOut<<crossMap[i][j]<<' ';
+	    answerOut<<endl;
     }
 
 
