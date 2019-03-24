@@ -8,12 +8,12 @@
 #include<sstream>
 using namespace std;
 struct carInfo{
-	string line;
-	int carId;
-	int carFrom;
-	int carTo;
-	int carHighspeed;
-	int carPlantime;
+//	string line;// read the line by line
+	int carId;// car id
+	int carFrom;//car from
+	int carTo;//car to
+	int carHighspeed;//car high speed
+	int carPlantime;//car plan time
 };
 
 int main()
@@ -22,7 +22,7 @@ int main()
     int i,j,k=5;
     int n=0;//car total number,from 0 to n 
     int a[10];
-    ifstream fin("inputcar.txt",ios::in);
+    ifstream fin("car.txt",ios::in);
     ofstream fout("answer.txt");
     if(!fin)
     {
@@ -37,8 +37,8 @@ int main()
     {
 	    
 	    carInfo info;//lin shi liang
-	    info.line="sd";
-	    info.line=s;//read the string by line to line
+//	    info.line="sd";//the line first
+//	    info.line=s;//read the string by line to line
 	    //字符串中取出数字
 	    char * z=(char*)s.data();
 	    const char *d= " ,()";//fen ge fu
@@ -68,12 +68,7 @@ int main()
 	    cout<<car[i].carId<<' '<<car[i].carFrom<<' '<<car[i].carTo<<' ';
             cout<< car[i].carHighspeed<<' '<<car[i].carPlantime<<endl;
 //	    cout<<car[i].line<<endl;
-
     }
-
-    cout<<endl;
-cout<<car[10].line<<endl;	    
-
     //duru shuju 
     //for(i=1;i<=k;i++)
     //      fin>>cardata[i];
