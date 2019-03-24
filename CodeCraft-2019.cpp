@@ -192,7 +192,7 @@ int main(int argc,char *argv[])
     }
 
 
-
+/* //window cout
 //ceshi the car
     for(i=0;i<carNum;i++){
 	    cout<<car[i].carId<<' '<<car[i].carFrom<<' '<<car[i].carTo<<' ';
@@ -212,22 +212,41 @@ int main(int argc,char *argv[])
             cout<<cross[i].crossRoadid_3<<' '<<cross[i].crossRoadid_4<<endl;
 //          cout<<car[i].line<<endl;
     }
-
-    //duru shuju 
-    //for(i=1;i<=k;i++)
-    //      fin>>cardata[i];
-    //export data out to answer.txt
+*/
+//duru shuju 
+//for(i=1;i<=k;i++)
+//      fin>>cardata[i];
+//export data out to answer.txt
+/*//answerOut
     answerOut<<"#(carId,StartTime,RoadId...)"<<endl;
     for(int i=0;i<carNum;i++)
     {
 	   
-          answerOut<<'('<<car[i].carId<<','<<')'<<endl;
-	    
+          answerOut<<'('<<car[i].carId<<','<<')';
+	  answerOut<<'('<<car[i].carFrom<<','<<')'<<endl; 
+    }
+*/
+//ceshi the car
+    for(i=0;i<carNum;i++){
+         answerOut<<car[i].carId<<' '<<car[i].carFrom<<' '<<car[i].carTo<<' ';
+         answerOut<< car[i].carHighspeed<<' '<<car[i].carPlantime<<endl;
+
+    }
+//ceshi the road
+    for(i=0;i<roadNum;i++){
+         answerOut<<road[i].roadId<<' '<<road[i].roadLength<<' '<<road[i].roadHighspeed<<' ';
+         answerOut<< road[i].roadChannel<<' '<<road[i].roadFrom<<' '<<road[i].roadTo<<' '<<road[i].roadIsduplex<<endl;
+    }
+//ceshi the cross
+    for(i=0;i<crossNum;i++){
+         answerOut<<cross[i].crossId<<' '<<cross[i].crossRoadid_1<<' '<<cross[i].crossRoadid_2<<' ';
+         answerOut<<cross[i].crossRoadid_3<<' '<<cross[i].crossRoadid_4<<endl;
     }
     answerOut<<endl;
-
-    //guanbi wenjian
+    //close the files
     answerOut.close();//close answer.txt
     carDatain.close();//close car.txt
+    roadDatain.close();//close road.txt
+    crossDatain.close();//close cross.txt
     return 0;
 }
