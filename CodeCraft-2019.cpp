@@ -59,7 +59,9 @@ int main(int argc,char *argv[])
         std::cout << "answerPath is " << answerPath << std::endl;
         // TODO:read input filebuf
 
-    int i,j;
+    int i,j,m,n;
+    int mapToroad[101][101];//map to roadid
+    int mapToroadspeed[10001];//map to roadid xuyao zhuyi road de id fanwei
     int k=5;//export data in answer
     int carNum=0;//car total number,from 1 to carNum
     int roadNum=0;//road total number,from 1 to roadNum
@@ -192,6 +194,7 @@ int main(int argc,char *argv[])
     }
     int inf=99999999;//can not arrive
     int crossMap[101][101];// biao shi daobuliao
+		    
     for(i=1;i<=crossNum;i++)
     {
 	    for(j=1;j<=crossNum;j++)
@@ -201,6 +204,10 @@ int main(int argc,char *argv[])
 		    else
 			    crossMap[i][j]=inf;
 	    }
+    }
+    for(i=0;i<=10000;i++)
+    {
+	    mapToroadspeed[i]=0;
     }
 /*    
     for(i=1;i<=crossNum;i++)
@@ -263,19 +270,37 @@ int main(int argc,char *argv[])
 	    if(road[i].roadIsduplex==1)
 	    {
 		    crossMap[road[i].roadFrom][road[i].roadTo]=road[i].roadLength;
+		    mapToroad[road[i].roadFrom][road[i].roadTo]=road[i].roadId;//betweentwocrossroaid
+		    mapToroadspeed[road[i].roadId]=road[i].roadHighspeed;//the road high speed
 		    crossMap[road[i].roadTo][road[i].roadFrom]=road[i].roadLength;
+		    mapToroad[road[i].roadFrom][road[i].roadTo]=road[i].roadId;
+		    mapToroadspeed[road[i].roadId]=road[i].roadHighspeed;
+
 	    }
 	    else
 	    {
 		    crossMap[road[i].roadFrom][road[i].roadTo]=road[i].roadLength;
+		    mapToroad[road[i].roadFrom][road[i].roadTo]=road[i].roadId;
+                    mapToroadspeed[road[i].roadId]=road[i].roadHighspeed;
 		    crossMap[road[i].roadTo][road[i].roadFrom]=inf;
 	    }
     }
+    //find the best close road
+
+
+
+
+
+//ce si
     for(i=1;i<=crossNum;i++)
     {
 	    for(j=1;j<=crossNum;j++)
 		    answerOut<<crossMap[i][j]<<' ';
 	    answerOut<<endl;
+    }
+    for(i=1;i<=10000;i++)
+    {
+	    cout<<mapToroadspeed[i]<<' ';
     }
 
 
