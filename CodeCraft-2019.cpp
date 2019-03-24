@@ -39,11 +39,11 @@ int main(int argc,char *argv[])
     int i,j,k=5;
     int n=0;//car total number,from 0 to n 
     int a[10];
-    ifstream carDatain("car.txt",ios::in);// car data in
-    ofstream answerOut("answer.txt");//answer out
+    ifstream carDatain("../config/car.txt",ios::in);// car data in
+    ofstream answerOut("answerPath");//answer out
     if(!carDatain)
     {
-        cout<<"inputcar can not open"<<endl;//panduan wenjian shifou dakai
+        cout<<"car.txt can not open"<<endl;//panduan wenjian shifou dakai
     }
     int cardata[100];//che 5ge shuju
     string stem;//not read the first line data
