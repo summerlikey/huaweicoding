@@ -51,7 +51,7 @@ int main(int argc,char *argv[])
     string s;//duru shuju字符串
     getline(carDatain,stem);//hulue di yi hang #
     vector<carInfo>car;//car de dong tai jie gou ti shuzui
-    while(getline(carDatain,s))//zhuhang durushuju
+    while(getline(carDatain,s))// read the data line by line
     {
 	    
 	    carInfo info;//lin shi liang
@@ -92,7 +92,7 @@ int main(int argc,char *argv[])
     //      fin>>cardata[i];
     //export data out to answer.txt
     answerOut<<"#(carId,StartTime,RoadId...)"<<endl;
-    for(int i=1;i<=k;i++)
+    for(int i=0;i<n;i++)
     {
 	   
           answerOut<<'('<<car[i].carId<<','<<')'<<endl;
