@@ -36,11 +36,12 @@ int main(int argc,char *argv[])
         std::cout << "answerPath is " << answerPath << std::endl;
         // TODO:read input filebuf
 
-    int i,j,k=5;
+    int i,j;
+    int k=5;//export data in answer
     int n=0;//car total number,from 0 to n 
-    int a[10];
-    ifstream carDatain("../config/car.txt",ios::in);// car data in
-    ofstream answerOut("answerPath");//answer out
+    int a[10];//transform string to number
+    ifstream carDatain(carPath,ios::in);// car data in
+    ofstream answerOut(answerPath);//answer out
     if(!carDatain)
     {
         cout<<"car.txt can not open"<<endl;//panduan wenjian shifou dakai
@@ -63,7 +64,7 @@ int main(int argc,char *argv[])
 	    p=strtok(z,d);
 	    i=1;
 	    while(p){
-                    //transance string to number
+                    //transform string to number
                     stringstream ss;
 		    ss<<p;
 		    ss>>a[i];
@@ -89,21 +90,18 @@ int main(int argc,char *argv[])
     //duru shuju 
     //for(i=1;i<=k;i++)
     //      fin>>cardata[i];
-
-
-
-    //lujing shuchu
+    //export data out to answer.txt
     answerOut<<"#(carId,StartTime,RoadId...)"<<endl;
     for(int i=1;i<=k;i++)
     {
 	   
-          answerOut<<'('<<cardata[i]<<','<<')'<<endl;
+          answerOut<<'('<<car[i].carId<<','<<')'<<endl;
 	    
     }
     answerOut<<endl;
 
     //guanbi wenjian
-    answerOut.close();
-    carDatain.close();
+    answerOut.close();//close answer.txt
+    carDatain.close();//close car.txt
     return 0;
 }
