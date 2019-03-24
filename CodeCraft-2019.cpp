@@ -64,12 +64,25 @@ int main(int argc,char *argv[])
     int n=0;//car total number,from 0 to n 
     int a[10];//transform string to number
     ifstream carDatain(carPath,ios::in);// car data in
+    ifstream roadDatain(roadPath,ios::in);// road data in
+    ifstream crossDatain(crossPath,ios::in);//cross data in
     ofstream answerOut(answerPath);//answer out
-    if(!carDatain)
+    if(!carDatain)//is car data open success?
     {
         cout<<"car.txt can not open"<<endl;//panduan wenjian shifou dakai
     }
-    int cardata[100];//che 5ge shuju
+    if(!roadDatain)//is road data open success?
+    {
+        cout<<"road.txt can not open"<<endl;//panduan wenjian shifou dakai
+    }
+    if(!crossDatain)//is cross data open success?
+    {
+        cout<<"cross.txt can not open"<<endl;//panduan wenjian shifou dakai
+    }
+    
+
+
+//  int cardata[100];//che 5ge shuju
     string stem;//not read the first line data
     string s;//duru shuju字符串
     getline(carDatain,stem);//hulue di yi hang #
