@@ -191,6 +191,61 @@ int main(int argc,char *argv[])
             crossNum++;//cross number + 1, total crossNum;
     }
 
+    int crossMap[101][101]={99999999};// biao shi daobuliao
+    for(i=1;i<=crossNum;i++)
+    {
+	    for(j=1;j<=crossNum;j++)
+	    {
+		 if(cross[i].crossRoadid_1!=-1)
+		    {
+		       if(cross[i].crossRoadid_1==cross[j].crossRoadid_1)
+			       crossMap[i][j]=1;//zhijueding ij
+		       if(cross[i].crossRoadid_1==cross[j].crossRoadid_2)
+			       crossMap[i][j]=1;
+		       if(cross[i].crossRoadid_1==cross[j].crossRoadid_3)
+			       crossMap[i][j]=1;
+		       if(cross[i].crossRoadid_1==cross[j].crossRoadid_4)
+			       crossMap[i][j]=1;
+		    }
+		 if(cross[i].crossRoadid_2!=-1)
+                    {
+                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_1)
+                               crossMap[i][j]=1;//zhijueding ij
+                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_2)
+                               crossMap[i][j]=1;
+                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_3)
+                               crossMap[i][j]=1;
+                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_4)
+                               crossMap[i][j]=1;
+                    }
+                 if(cross[i].crossRoadid_3!=-1)
+                    {
+                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_1)
+                               crossMap[i][j]=1;//zhijueding ij
+                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_2)
+                               crossMap[i][j]=1;
+                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_3)
+                               crossMap[i][j]=1;
+                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_4)
+                               crossMap[i][j]=1;
+                    }
+                 if(cross[i].crossRoadid_4!=-1)
+                    {
+                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_1)
+                               crossMap[i][j]=1;//zhijueding ij
+                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_2)
+                               crossMap[i][j]=1;
+                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_3)
+                               crossMap[i][j]=1;
+                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_4)
+                               crossMap[i][j]=1;
+                    }
+
+	    }
+    }
+
+
+
 
 /* //window cout
 //ceshi the car
