@@ -52,11 +52,13 @@ struct crossInfo{
 vector<crossInfo>cross;
 struct crossInfo CROSS[500]={0,0,0,0,0};
 struct roadInfo ROAD[10000]={0,0,0,0,0,0,0};
-//run road cunchu
+//run road cunchu//car run
 struct carRuninfo{
 	int a[500];
 };
 vector<carRuninfo>carRun;
+
+
 
 int main(int argc,char *argv[])
 {
@@ -245,16 +247,21 @@ struct runNote{
    int book[10000]={0};
    int head,tail;
    int r_1,r_2,r_3,r_4;
-   int c_1,c_2,c_3,c_4;
    int f_1,f_2,f_3,f_4;
    int t_1,t_2,t_3,t_4;
-   int cro;//xia ge cross
+   int runNum;
+   int cFrom;
+   int cTo;
    //CROSS[4] TO CROSS[13]
+for(i=0;i<carNum;i++)
+{
+   cFrom=car[i].carFrom;
+   cTo=car[i].carTo;
    head=1;
    tail=1;
    runQue[tail].f=0;
    runQue[tail].dis=0;
-   runQue[tail].crossId=4;
+   runQue[tail].crossId=cFrom;
    runQue[tail].roadId=0;
    tail++;
    int flag=0;//zongdian 0 not 1 arrave
@@ -320,7 +327,7 @@ struct runNote{
 		      }
 		      tail++;
 	      }
-	      if(runQue[tail-1].crossId==13)
+	      if(runQue[tail-1].crossId==cTo)
 	      {
 		      flag=1;
 		      break;
@@ -360,7 +367,7 @@ struct runNote{
                       }
                       tail++;
               }
-              if(runQue[tail-1].crossId==13)
+              if(runQue[tail-1].crossId==cTo)
               {
                       flag=1;
                       break;
@@ -400,7 +407,7 @@ struct runNote{
                       }
                       tail++;
               }
-              if(runQue[tail-1].crossId==13)
+              if(runQue[tail-1].crossId==cTo)
               {
                       flag=1;
                       break;
@@ -440,7 +447,7 @@ struct runNote{
                       }
                       tail++;
               }
-              if(runQue[tail-1].crossId==13)
+              if(runQue[tail-1].crossId==cTo)
               {
                       flag=1;
                       break;
@@ -448,22 +455,32 @@ struct runNote{
 	      head++;
 
       }
+
+runNum=1;
+carRuninfo info;
 tail--;
 while(head>1)
-{	
-	
-     cout<<runQue[tail].roadId<<' '<<endl;
+{
+
+     info.a[runNum]=runQue[tail].roadId;
+ //  cout<<runQue[tail].roadId<<' '<<endl;
      head=runQue[tail].f;
      tail=head;
+     runNum++;
+
 }
-
-
+info.a[0]=runNum-1;
+carRun.push_back(info);
+}
 //guangdu sousou
 //ceshi run road
     for(i=0;i<carNum;i++)
     {
-	    answerOut<<'('<<car[i].carId<<',';
-		    answerOut<<',';
+	    answerOut<<'('<<car[i].carId<<','<<car[i].carPlantime;
+	    for(j=carRun[i].a[0];j>=1;j--)
+	    {
+		    answerOut<<','<<carRun[i].a[j];
+	    }
 	    answerOut<<')'<<endl;
     }
     answerOut<<endl;
