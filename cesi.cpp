@@ -65,6 +65,7 @@ int mmin=99999999;//zuixiao lucheng
 void dfs(int nowCross,int nTo, int runDis)
 {
 
+       int i;
        int j;
        int a;
        a=nTo;
@@ -74,6 +75,17 @@ void dfs(int nowCross,int nTo, int runDis)
        {
                if(runDis<mmin)
                        mmin=runDis;
+	       carRuninfo info;
+	       int n=0;
+	       int m=0;
+	       for(i=1;i<=top-1;i++)
+	       {
+		       n=runRoad[i];
+		       m=runRoad[i+1];
+		       info.a[i]=mapToroad[n][m];
+	       }
+	       info.a[0]=top-1;
+	       carRun.push_back(info);
                return;
        }
        for(j=1;j<=crossNum;j++)
@@ -95,26 +107,12 @@ return ;
 
 void findRunroad(int crossFrom,int crossTo)
 {
-        carRuninfo info;
-        int n=0;
-        int m=0;
-        int k;
-        int i;
         mmin = 99999999;
         book[200]={0};
         runRoad[100]={0};
         top=0;
         book[crossFrom]=1;
         dfs(crossFrom,crossTo,0);
-        for(i=1;i<=top-1;i++)
-        {
-                n=runRoad[i];
-                m=runRoad[i+1];
-                info.a[i]=mapToroad[n][m];
-                k++;
-        }
-        info.a[0]=k;
-        carRun.push_back(info);
         return;
 }
 
@@ -424,7 +422,7 @@ for(i=0;i<carNum;i++)
     for(i=0;i<carNum;i++)
     {
 	    int h=carRun[i].a[0];
-	    answerOut<<'('<<car[i].carId<<',';
+	    answerOut<<'('<<car[i].carId<<','<<h;
 	    for(j=1;j<=h;j++)
 		    answerOut<<','<<carRun[i].a[j];
 	    answerOut<<')'<<endl;
