@@ -10,12 +10,12 @@
 using namespace std;
 
 int roadIdtoroad[10001]={0};
-int crossMap[101][101]={0};
-int inf=99999999;
+int crossMap[101][101];
+int INF=99999999;
 int carNum;//total car number
 int roadNum;//total road number
 int crossNum;//total cross number
-
+int runCross[1000];
 
 //car data
 struct carInfo{
@@ -55,68 +55,40 @@ struct carRuninfo{
 };
 vector<carRuninfo>carRun;
 
-int mapToroad[101][101];
+int mapToroad[101][101]={0};
 int top;//zhan
-int runRoad[100];
-int nFrom;//chufa cross
-int nTo;//mubiaolukou
-int book[200];//shifou jingguo cross
+int cFrom=0;//chufa cross
+int cTo=0;
+int book[1000];//shifou jingguo cross
 int mmin=99999999;//zuixiao lucheng
-void dfs(int nowCross,int nTo, int runDis)
+void dfs(int nowCross,int finalCross, int runDis)
 {
 
        int i;
        int j;
-       int a;
-       a=nTo;
+       int k=0;
        if(runDis>mmin)
                return;
-       if(nowCross==nTo)
+       if(nowCross==cTo)
        {
-               if(runDis<mmin)
+	       if(runDis<mmin)
                        mmin=runDis;
-	       carRuninfo info;
-	       int n=0;
-	       int m=0;
-	       for(i=1;i<=top-1;i++)
-	       {
-		       n=runRoad[i];
-		       m=runRoad[i+1];
-		       info.a[i]=mapToroad[n][m];
-	       }
-	       info.a[0]=top-1;
-	       carRun.push_back(info);
                return;
        }
        for(j=1;j<=crossNum;j++)
        {
-
-               if(crossMap[nowCross][j]!=99999999&&book[j]==0)
+               if(crossMap[nowCross][j]!=99999999&&book[j]==0&&nowCross!=j)
                {
                        book[j]=1;//cross in the runRoad
                        top++;
-                       runRoad[top]=nowCross;
-                       dfs(j,a,runDis+crossMap[nowCross][j]);//from j cross to find other cross
+                       runCross[top]=nowCross;
+                       dfs(j,cTo,runDis+crossMap[nowCross][j]);//from j cross to find other cross
                        book[j]=0;//
                        top--;
                }
        }
 return ;
 }
-
-
-void findRunroad(int crossFrom,int crossTo)
-{
-        mmin = 99999999;
-        book[200]={0};
-        runRoad[100]={0};
-        top=0;
-        book[crossFrom]=1;
-        dfs(crossFrom,crossTo,0);
-        return;
-}
-
-
 
 
 int main(int argc,char *argv[])
@@ -283,7 +255,7 @@ int main(int argc,char *argv[])
 		    if(i==j)
 			    crossMap[i][j]=0;
 		    else
-			    crossMap[i][j]=inf;
+			    crossMap[i][j]=INF;
 	    }
     }
     for(i=0;i<=10000;i++)
@@ -362,18 +334,41 @@ int main(int argc,char *argv[])
 		    crossMap[road[i].roadFrom][road[i].roadTo]=road[i].roadLength;
 		    mapToroad[road[i].roadFrom][road[i].roadTo]=road[i].roadId;
                     mapToroadspeed[road[i].roadId]=road[i].roadHighspeed;
-		    crossMap[road[i].roadTo][road[i].roadFrom]=inf;
+		    crossMap[road[i].roadTo][road[i].roadFrom]=INF;
 	    }
     }
 //find the best close road
+
 for(i=0;i<carNum;i++)
-{
-	int cFrom;
-	int cTo;
+    {
+	mmin=99999999;
+	int j;
 	cFrom=car[i].carFrom;
 	cTo=car[i].carTo;
-	findRunroad(cFrom,cTo);
+	for(j=0;j<1000;j++)
+		book[j]=0;
+	for(j=0;j<1000;j++)
+		runCross[j]=0;
+	top=0;
+	runCross[0]=cFrom;
+	cout<<runCross[0]<<endl;
+	book[cFrom]=1;
+	dfs(cFrom,cTo,0);
+	carRuninfo info;
+               int n=0;
+               int m=0;
+/*               for(i=0;i<=top-1;i++)
+               {
+                       n=runCross[i];
+                       m=runCross[i+1];
+                       info.a[i]=mapToroad[n][m];
+		       }
+*/
+	       info.a[0]=mmin;
+               carRun.push_back(info);
+
 }
+
 //ce si
 /*
     for(i=1;i<=crossNum;i++)
@@ -421,10 +416,8 @@ for(i=0;i<carNum;i++)
 
     for(i=0;i<carNum;i++)
     {
-	    int h=carRun[i].a[0];
-	    answerOut<<'('<<car[i].carId<<','<<h;
-	    for(j=1;j<=h;j++)
-		    answerOut<<','<<carRun[i].a[j];
+	    answerOut<<'('<<car[i].carId<<',';
+		    answerOut<<','<<carRun[i].a[0];
 	    answerOut<<')'<<endl;
     }
 
