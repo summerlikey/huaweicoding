@@ -9,6 +9,8 @@
 #include<sstream>
 using namespace std;
 
+
+
 int roadIdtoroad[10001]={0};
 int crossMap[101][101];
 int INF=99999999;
@@ -48,48 +50,13 @@ struct crossInfo{
 	int crossRoadid_4;//roadId
 };
 vector<crossInfo>cross;
-
+struct crossInfo CROSS[500]={0,0,0,0,0};
+struct roadInfo ROAD[10000]={0,0,0,0,0,0,0};
 //run road cunchu
 struct carRuninfo{
 	int a[500];
 };
 vector<carRuninfo>carRun;
-
-int mapToroad[101][101]={0};
-int top;//zhan
-int cFrom=0;//chufa cross
-int cTo=0;
-int book[1000];//shifou jingguo cross
-int mmin=99999999;//zuixiao lucheng
-void dfs(int nowCross,int finalCross, int runDis)
-{
-
-       int i;
-       int j;
-       int k=0;
-       if(runDis>mmin)
-               return;
-       if(nowCross==cTo)
-       {
-	       if(runDis<mmin)
-                       mmin=runDis;
-               return;
-       }
-       for(j=1;j<=crossNum;j++)
-       {
-               if(crossMap[nowCross][j]!=99999999&&book[j]==0&&nowCross!=j)
-               {
-                       book[j]=1;//cross in the runRoad
-                       top++;
-                       runCross[top]=nowCross;
-                       dfs(j,cTo,runDis+crossMap[nowCross][j]);//from j cross to find other cross
-                       book[j]=0;//
-                       top--;
-               }
-       }
-return ;
-}
-
 
 int main(int argc,char *argv[])
 {
@@ -248,197 +215,248 @@ int main(int argc,char *argv[])
             // cout<<s<<endl;//know if the s line has in the info,line
             crossNum++;//cross number + 1, total crossNum;
     }		    
-    for(i=1;i<=crossNum;i++)
-    {
-	    for(j=1;j<=crossNum;j++)
-	    {
-		    if(i==j)
-			    crossMap[i][j]=0;
-		    else
-			    crossMap[i][j]=INF;
-	    }
-    }
-    for(i=0;i<=10000;i++)
-    {
-	    mapToroadspeed[i]=0;
-    }
-/*    
-    for(i=1;i<=crossNum;i++)
-    {
-	    for(j=1;j<=crossNum;j++)
-	    {
-		 if(i==j)
-			 continue;
-		 if(cross[i].crossRoadid_1!=-1)
-		    {
-		       if(cross[i].crossRoadid_1==cross[j].crossRoadid_1)
-			       crossMap[i][j]=1;//zhijueding ij
-		       if(cross[i].crossRoadid_1==cross[j].crossRoadid_2)
-			       crossMap[i][j]=1;
-		       if(cross[i].crossRoadid_1==cross[j].crossRoadid_3)
-			       crossMap[i][j]=1;
-		       if(cross[i].crossRoadid_1==cross[j].crossRoadid_4)
-			       crossMap[i][j]=1;
-		    }
-		 if(cross[i].crossRoadid_2!=-1)
-                    {
-                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_1)
-                               crossMap[i][j]=1;//zhijueding ij
-                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_2)
-                               crossMap[i][j]=1;
-                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_3)
-                               crossMap[i][j]=1;
-                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_4)
-                               crossMap[i][j]=1;
-                    }
-                 if(cross[i].crossRoadid_3!=-1)
-                    {
-                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_1)
-                               crossMap[i][j]=1;//zhijueding ij
-                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_2)
-                               crossMap[i][j]=1;
-                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_3)
-                               crossMap[i][j]=1;
-                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_4)
-                               crossMap[i][j]=1;
-                    }
-                 if(cross[i].crossRoadid_4!=-1)
-                    {
-                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_1)
-                               crossMap[i][j]=1;//zhijueding ij
-                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_2)
-                               crossMap[i][j]=1;
-                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_3)
-                               crossMap[i][j]=1;
-                       if(cross[i].crossRoadid_1==cross[j].crossRoadid_4)
-                               crossMap[i][j]=1;
-                    }
-	    }
-    }
-*/
-    //is duplex? if is then the map will be inf=99999999
-    for(i=0;i<roadNum;i++)
-    {
-	    if(road[i].roadIsduplex==1)
-	    {
-		    crossMap[road[i].roadFrom][road[i].roadTo]=road[i].roadLength;
-		    mapToroad[road[i].roadFrom][road[i].roadTo]=road[i].roadId;//betweentwocrossroaid
-		    mapToroadspeed[road[i].roadId]=road[i].roadHighspeed;//the road high speed
-		    crossMap[road[i].roadTo][road[i].roadFrom]=road[i].roadLength;
-		    mapToroad[road[i].roadFrom][road[i].roadTo]=road[i].roadId;
-		    mapToroadspeed[road[i].roadId]=road[i].roadHighspeed;
-
-	    }
-	    else
-	    {
-		    crossMap[road[i].roadFrom][road[i].roadTo]=road[i].roadLength;
-		    mapToroad[road[i].roadFrom][road[i].roadTo]=road[i].roadId;
-                    mapToroadspeed[road[i].roadId]=road[i].roadHighspeed;
-		    crossMap[road[i].roadTo][road[i].roadFrom]=INF;
-	    }
-    }
-//find the best close road
-
-for(i=0;i<carNum;i++)
-    {
-	mmin=99999999;
-	int j;
-	cFrom=car[i].carFrom;
-	cTo=car[i].carTo;
-	for(j=0;j<1000;j++)
-		book[j]=0;
-	for(j=0;j<1000;j++)
-		runCross[j]=0;
-	top=0;
-	runCross[0]=cFrom;
-	cout<<runCross[0]<<endl;
-	book[cFrom]=1;
-	dfs(cFrom,cTo,0);
-	carRuninfo info;
-               int n=0;
-               int m=0;
-/*               for(i=0;i<=top-1;i++)
-               {
-                       n=runCross[i];
-                       m=runCross[i+1];
-                       info.a[i]=mapToroad[n][m];
-		       }
-*/
-	       info.a[0]=mmin;
-               carRun.push_back(info);
-
+for(i=0;i<=crossNum;i++)
+{	
+    CROSS[cross[i].crossId].crossId=cross[i].crossId;
+    CROSS[cross[i].crossId].crossRoadid_1=cross[i].crossRoadid_1;
+    CROSS[cross[i].crossId].crossRoadid_2=cross[i].crossRoadid_2;
+    CROSS[cross[i].crossId].crossRoadid_3=cross[i].crossRoadid_3;
+    CROSS[cross[i].crossId].crossRoadid_4=cross[i].crossRoadid_4;
+}   
+for(i=0;i<=roadNum;i++)
+{
+	ROAD[road[i].roadId].roadId=road[i].roadId;
+	ROAD[road[i].roadId].roadLength=road[i].roadLength;
+	ROAD[road[i].roadId].roadHighspeed=road[i].roadHighspeed;
+	ROAD[road[i].roadId].roadChannel=road[i].roadChannel;
+	ROAD[road[i].roadId].roadFrom=road[i].roadFrom;
+	ROAD[road[i].roadId].roadTo=road[i].roadTo;
+	ROAD[road[i].roadId].roadIsduplex=road[i].roadIsduplex;
 }
+//guangdu sousuo
+struct runNote{
+	int f;// father note
+	int dis;//now the dis from firstcross to last cross
+	int crossId;//xiayigecross
+	int roadId;
+};
 
-//ce si
-/*
-    for(i=1;i<=crossNum;i++)
-    {
-	    for(j=1;j<=crossNum;j++)
-		    answerOut<<crossMap[i][j]<<' ';
-	    answerOut<<endl;
-    }
-*/
-/* //window cout
-//ceshi the car
-    for(i=0;i<carNum;i++){
-	    cout<<car[i].carId<<' '<<car[i].carFrom<<' '<<car[i].carTo<<' ';
-            cout<< car[i].carHighspeed<<' '<<car[i].carPlantime<<endl;
-//	    cout<<car[i].line<<endl;
-    
-    }
-//ceshi the road
-    for(i=0;i<roadNum;i++){
-            cout<<road[i].roadId<<' '<<road[i].roadLength<<' '<<road[i].roadHighspeed<<' ';
-            cout<< road[i].roadChannel<<' '<<road[i].roadFrom<<' '<<road[i].roadTo<<' '<<road[i].roadIsduplex<<endl;
-//          cout<<car[i].line<<endl;
-    }
-//ceshi the cross
-    for(i=0;i<crossNum;i++){
-            cout<<cross[i].crossId<<' '<<cross[i].crossRoadid_1<<' '<<cross[i].crossRoadid_2<<' ';
-            cout<<cross[i].crossRoadid_3<<' '<<cross[i].crossRoadid_4<<endl;
-//          cout<<car[i].line<<endl;
-    }
-*/
-//duru shuju 
-//for(i=1;i<=k;i++)
-//      fin>>cardata[i];
-//export data out to answer.txt
-/*//answerOut
-    answerOut<<"#(carId,StartTime,RoadId...)"<<endl;
-    for(int i=0;i<carNum;i++)
-    {
-	   
-          answerOut<<'('<<car[i].carId<<','<<')';
-	  answerOut<<'('<<car[i].carFrom<<','<<')'<<endl; 
-    }
-*/
+   struct runNote runQue[10000];//sui ditu gaibian
+   int book[10000]={0};
+   int head,tail;
+   int r_1,r_2,r_3,r_4;
+   int c_1,c_2,c_3,c_4;
+   int f_1,f_2,f_3,f_4;
+   int t_1,t_2,t_3,t_4;
+   int cro;//xia ge cross
+   //CROSS[5] TO CROSS[30]
+   head=1;
+   tail=1;
+   runQue[tail].f=0;
+   runQue[tail].dis=0;
+   runQue[tail].crossId=5;
+   runQue[tail].roadId=0;
+   tail++;
+//   book[5]=1;
+   int flag=0;//zongdian 0 not 1 arrave
+   while(head<tail)
+      { 
+	      
+	      r_1=CROSS[runQue[head].crossId].crossRoadid_1;
+	      r_2=CROSS[runQue[head].crossId].crossRoadid_2;
+	      r_3=CROSS[runQue[head].crossId].crossRoadid_3;
+	      r_4=CROSS[runQue[head].crossId].crossRoadid_4;
+	      if(r_1!=-1)
+	      {
+		      f_1=ROAD[r_1].roadFrom;
+	              t_1=ROAD[r_1].roadTo;
+	      }
+	      if(r_2!=-1)
+	      {
+		      f_2=ROAD[r_2].roadFrom;
+	              t_2=ROAD[r_2].roadTo;
+	      }
+	      if(r_3!=-1)
+	      {
+		      f_3=ROAD[r_3].roadFrom;
+	              t_3=ROAD[r_3].roadTo;
+	      }
+	      if(r_4!=-1)
+	      {
+		      f_4=ROAD[r_4].roadFrom;
+	              t_4=ROAD[t_4].roadTo;
+	      }
+	      //four
+	      if(r_1!=-1&&book[r_1]==0)
+	      {
+		      if(ROAD[r_1].roadIsduplex=0)
+		      {
+			      if(f_1==runQue[head].crossId)
+			      {
+				      book[r_1]=1;
+				      runQue[tail].f=head;
+				      runQue[tail].dis=ROAD[r_1].roadLength+runQue[head].dis;
+				      runQue[tail].roadId=r_1;
+				      runQue[tail].crossId=t_1;
+			      }
+		      }
+		      else
+		      {
+			      if(runQue[head].crossId==f_1)
+			      {
+			       	      book[r_1]=1;
+                                      runQue[tail].f=head;
+                                      runQue[tail].dis=ROAD[r_1].roadLength+runQue[head].dis;
+                                      runQue[tail].roadId=r_1;
+                                      runQue[tail].crossId=t_1;
+			      }
+			      else
+			      {
+				      book[r_1]=1;
+				      runQue[tail].f=head;
+				      runQue[tail].dis=ROAD[r_1].roadLength+runQue[head].dis;
+				      runQue[tail].roadId=r_1;
+				      runQue[tail].crossId=f_1;
+			      }
+		      }
+		      tail++;
+	      }
+	      if(runQue[head].crossId==30)
+	      {
+		      flag=1;
+		      break;
+	      }
+	      //2
+	      if(r_2!=-1&&book[r_2]==0)
+              {
+                      if(ROAD[r_2].roadIsduplex=0)
+                      {
+                              if(f_2==runQue[head].crossId)
+                              {
+                                      book[r_2]=1;
+                                      runQue[tail].f=head;
+                                      runQue[tail].dis=ROAD[r_2].roadLength+runQue[head].dis;
+                                      runQue[tail].roadId=r_2;
+                                      runQue[tail].crossId=t_2;
+                              }
+                      }
+                      else
+                      {
+                              if(runQue[head].crossId==f_1)
+                              {
+                                      book[r_2]=1;
+                                      runQue[tail].f=head;
+                                      runQue[tail].dis=ROAD[r_2].roadLength+runQue[head].dis;
+                                      runQue[tail].roadId=r_2;
+                                      runQue[tail].crossId=t_2;
+                              }
+                              else
+                              {
+                                      book[r_2]=1;
+                                      runQue[tail].f=head;
+                                      runQue[tail].dis=ROAD[r_2].roadLength+runQue[head].dis;
+                                      runQue[tail].roadId=r_2;
+                                      runQue[tail].crossId=f_2;
+                              }
+                      }
+                      tail++;
+              }
+              if(runQue[head].crossId==30)
+              {
+                      flag=1;
+                      break;
+              }
+	      //3
+             if(r_3!=-1&&book[r_1]==0)
+              {
+                      if(ROAD[r_3].roadIsduplex=0)
+                      {
+                              if(f_3==runQue[head].crossId)
+                              {
+                                      book[r_3]=1;
+                                      runQue[tail].f=head;
+                                      runQue[tail].dis=ROAD[r_3].roadLength+runQue[head].dis;
+                                      runQue[tail].roadId=r_3;
+                                      runQue[tail].crossId=t_3;
+                              }
+                      }
+                      else
+                      {
+                              if(runQue[head].crossId==f_3)
+                              {
+                                      book[r_3]=1;
+                                      runQue[tail].f=head;
+                                      runQue[tail].dis=ROAD[r_3].roadLength+runQue[head].dis;
+                                      runQue[tail].roadId=r_3;
+                                      runQue[tail].crossId=t_3;
+                              }
+                              else
+                              {
+                                      book[r_3]=1;
+                                      runQue[tail].f=head;
+                                      runQue[tail].dis=ROAD[r_3].roadLength+runQue[head].dis;
+                                      runQue[tail].roadId=r_3;
+                                      runQue[tail].crossId=f_3;
+                              }
+                      }
+                      tail++;
+              }
+              if(runQue[head].crossId==30)
+              {
+                      flag=1;
+                      break;
+              }
+	      //4
+             if(r_4!=-1&&book[r_4]==0)
+              {
+                      if(ROAD[r_4].roadIsduplex=0)
+                      {
+                              if(f_4==runQue[head].crossId)
+                              {
+                                      book[r_4]=1;
+                                      runQue[tail].f=head;
+                                      runQue[tail].dis=ROAD[r_4].roadLength+runQue[head].dis;
+                                      runQue[tail].roadId=r_4;
+                                      runQue[tail].crossId=t_4;
+                              }
+                      }
+                      else
+                      {
+                              if(runQue[head].crossId==f_4)
+                              {
+                                      book[r_4]=1;
+                                      runQue[tail].f=head;
+                                      runQue[tail].dis=ROAD[r_4].roadLength+runQue[head].dis;
+                                      runQue[tail].roadId=r_4;
+                                      runQue[tail].crossId=t_4;
+                              }
+                              else
+                              {
+                                      book[r_4]=1;
+                                      runQue[tail].f=head;
+                                      runQue[tail].dis=ROAD[r_4].roadLength+runQue[head].dis;
+                                      runQue[tail].roadId=r_4;
+                                      runQue[tail].crossId=f_4;
+                              }
+                      }
+                      tail++;
+              }
+              if(runQue[head].crossId==30)
+              {
+                      flag=1;
+                      break;
+              }
+	      head++;
+
+      }
+//guangdu sousou
 //ceshi run road
-
     for(i=0;i<carNum;i++)
     {
 	    answerOut<<'('<<car[i].carId<<',';
-		    answerOut<<','<<carRun[i].a[0];
+		    answerOut<<',';
 	    answerOut<<')'<<endl;
     }
-
-/*  
-//ceshi the car
-    for(i=0;i<carNum;i++){
-         answerOut<<car[i].carId<<' '<<car[i].carFrom<<' '<<car[i].carTo<<' ';
-         answerOut<< car[i].carHighspeed<<' '<<car[i].carPlantime<<endl;
-
-    }
-//ceshi the road
-    for(i=0;i<roadNum;i++){
-         answerOut<<road[i].roadId<<' '<<road[i].roadLength<<' '<<road[i].roadHighspeed<<' ';
-         answerOut<< road[i].roadChannel<<' '<<road[i].roadFrom<<' '<<road[i].roadTo<<' '<<road[i].roadIsduplex<<endl;
-    }
-//ceshi the cross
-    for(i=0;i<crossNum;i++){
-         answerOut<<cross[i].crossId<<' '<<cross[i].crossRoadid_1<<' '<<cross[i].crossRoadid_2<<' ';
-         answerOut<<cross[i].crossRoadid_3<<' '<<cross[i].crossRoadid_4<<endl;
-    }
-*/
     answerOut<<endl;
     //close the files
     answerOut.close();//close answer.txt
