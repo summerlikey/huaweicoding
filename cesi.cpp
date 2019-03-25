@@ -249,15 +249,14 @@ struct runNote{
    int f_1,f_2,f_3,f_4;
    int t_1,t_2,t_3,t_4;
    int cro;//xia ge cross
-   //CROSS[5] TO CROSS[30]
+   //CROSS[4] TO CROSS[13]
    head=1;
    tail=1;
    runQue[tail].f=0;
    runQue[tail].dis=0;
-   runQue[tail].crossId=5;
+   runQue[tail].crossId=4;
    runQue[tail].roadId=0;
    tail++;
-//   book[5]=1;
    int flag=0;//zongdian 0 not 1 arrave
    while(head<tail)
       { 
@@ -321,7 +320,7 @@ struct runNote{
 		      }
 		      tail++;
 	      }
-	      if(runQue[head].crossId==30)
+	      if(runQue[tail-1].crossId==13)
 	      {
 		      flag=1;
 		      break;
@@ -361,7 +360,7 @@ struct runNote{
                       }
                       tail++;
               }
-              if(runQue[head].crossId==30)
+              if(runQue[tail-1].crossId==13)
               {
                       flag=1;
                       break;
@@ -401,7 +400,7 @@ struct runNote{
                       }
                       tail++;
               }
-              if(runQue[head].crossId==30)
+              if(runQue[tail-1].crossId==13)
               {
                       flag=1;
                       break;
@@ -441,7 +440,7 @@ struct runNote{
                       }
                       tail++;
               }
-              if(runQue[head].crossId==30)
+              if(runQue[tail-1].crossId==13)
               {
                       flag=1;
                       break;
