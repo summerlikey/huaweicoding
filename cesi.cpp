@@ -284,12 +284,12 @@ struct runNote{
 	      if(r_4!=-1)
 	      {
 		      f_4=ROAD[r_4].roadFrom;
-	              t_4=ROAD[t_4].roadTo;
+	              t_4=ROAD[r_4].roadTo;
 	      }
 	      //four
 	      if(r_1!=-1&&book[r_1]==0)
 	      {
-		      if(ROAD[r_1].roadIsduplex=0)
+		      if(ROAD[r_1].roadIsduplex==0)
 		      {
 			      if(f_1==runQue[head].crossId)
 			      {
@@ -329,7 +329,7 @@ struct runNote{
 	      //2
 	      if(r_2!=-1&&book[r_2]==0)
               {
-                      if(ROAD[r_2].roadIsduplex=0)
+                      if(ROAD[r_2].roadIsduplex==0)
                       {
                               if(f_2==runQue[head].crossId)
                               {
@@ -342,7 +342,7 @@ struct runNote{
                       }
                       else
                       {
-                              if(runQue[head].crossId==f_1)
+                              if(runQue[head].crossId==f_2)
                               {
                                       book[r_2]=1;
                                       runQue[tail].f=head;
@@ -367,9 +367,9 @@ struct runNote{
                       break;
               }
 	      //3
-             if(r_3!=-1&&book[r_1]==0)
+             if(r_3!=-1&&book[r_3]==0)
               {
-                      if(ROAD[r_3].roadIsduplex=0)
+                      if(ROAD[r_3].roadIsduplex==0)
                       {
                               if(f_3==runQue[head].crossId)
                               {
@@ -409,7 +409,7 @@ struct runNote{
 	      //4
              if(r_4!=-1&&book[r_4]==0)
               {
-                      if(ROAD[r_4].roadIsduplex=0)
+                      if(ROAD[r_4].roadIsduplex==0)
                       {
                               if(f_4==runQue[head].crossId)
                               {
@@ -449,6 +449,16 @@ struct runNote{
 	      head++;
 
       }
+tail--;
+while(head>1)
+{	
+	
+     cout<<runQue[tail].roadId<<' '<<endl;
+     head=runQue[tail].f;
+     tail=head;
+}
+
+
 //guangdu sousou
 //ceshi run road
     for(i=0;i<carNum;i++)
