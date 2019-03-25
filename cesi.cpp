@@ -243,7 +243,7 @@ struct runNote{
 	int roadId;
 };
 
-   struct runNote runQue[10000];//sui ditu gaibian
+//   struct runNote runQue[10000];//sui ditu gaibian
    int book[10000]={0};
    int head,tail;
    int r_1,r_2,r_3,r_4;
@@ -253,18 +253,19 @@ struct runNote{
    int cFrom;
    int cTo;
    //CROSS[4] TO CROSS[13]
-for(i=0;i<1;i++)
+for(i=0;i<2;i++)
 {
-   cFrom=1;
-   cTo=36;
+   struct runNote runQue[10000];
+   cFrom=car[i].carFrom;
+   cTo=car[i].carTo;
    head=1;
    tail=1;
+   book[10000]={0};
    runQue[tail].f=0;
    runQue[tail].dis=0;
    runQue[tail].crossId=cFrom;
    runQue[tail].roadId=0;
    tail++;
-   int flag=0;//zongdian 0 not 1 arrave
    while(head<tail)
       { 
 	      
@@ -329,7 +330,6 @@ for(i=0;i<1;i++)
 	      }
 	      if(runQue[tail-1].crossId==cTo)
 	      {
-		      flag=1;
 		      break;
 	      }
 	      //2
@@ -369,7 +369,6 @@ for(i=0;i<1;i++)
               }
               if(runQue[tail-1].crossId==cTo)
               {
-                      flag=1;
                       break;
               }
 	      //3
@@ -409,7 +408,6 @@ for(i=0;i<1;i++)
               }
               if(runQue[tail-1].crossId==cTo)
               {
-                      flag=1;
                       break;
               }
 	      //4
@@ -449,7 +447,6 @@ for(i=0;i<1;i++)
               }
               if(runQue[tail-1].crossId==cTo)
               {
-                      flag=1;
                       break;
               }
 	      head++;
