@@ -465,8 +465,18 @@ while(head>1)
 }
 carRun[i].a[0]=runNum-1;
 }
+// the carPlantime
+// just kiding
+for(i=0;i<carNum;i++)
+{
+	car[i].carPlantime=car[i].carPlantime+i+30;
+}
+
+
+
+//the carPlantime
 //guangdu sousou
-//ceshi run road
+//the answer
     for(i=0;i<carNum;i++)
     {
 	    answerOut<<'('<<car[i].carId<<','<<car[i].carPlantime;
