@@ -56,211 +56,30 @@ struct roadInfo ROAD[10000]={0,0,0,0,0,0,0};
 struct carRuninfo{
 	int a[500];
 };
-vector<carRuninfo>carRun;
+struct carRuninfo carRun[100000];
 
-
-
-int main(int argc,char *argv[])
-{
-	std::cout << "Begin" << std::endl;
-
-        if(argc < 5){
-                std::cout << "please input args: carPath, roadPath, crossPath, answerPath" << std::endl;
-                exit(1);
-        }
-
-        std::string carPath(argv[1]);
-        std::string roadPath(argv[2]);
-        std::string crossPath(argv[3]);
-        std::string answerPath(argv[4]);
-
-        std::cout << "carPath is " << carPath << std::endl;
-        std::cout << "roadPath is " << roadPath << std::endl;
-        std::cout << "crossPath is " << crossPath << std::endl;
-        std::cout << "answerPath is " << answerPath << std::endl;
-        // TODO:read input filebuf
-
-    int i,j,m,n;
-    int mapToroad[101][101];//map to roadid
-    int mapToroadspeed[10001];//map to roadid xuyao zhuyi road de id fanwei
-    int k=5;//export data in answer
-    carNum=0;//car total number,from 1 to carNum
-    roadNum=0;//road total number,from 1 to roadNum
-    crossNum=0;//cross total number ,from 1 to crossNum
-    int a[10];//transform string to number
-    ifstream carDatain(carPath,ios::in);// car data in
-    ifstream roadDatain(roadPath,ios::in);// road data in
-    ifstream crossDatain(crossPath,ios::in);//cross data in
-    ofstream answerOut(answerPath);//answer out
-    if(!carDatain)//is car data open success?
-    {
-        cout<<"car.txt can not open"<<endl;//panduan wenjian shifou dakai
-    }
-    if(!roadDatain)//is road data open success?
-    {
-        cout<<"road.txt can not open"<<endl;//panduan wenjian shifou dakai
-    }
-    if(!crossDatain)//is cross data open success?
-    {
-        cout<<"cross.txt can not open"<<endl;//panduan wenjian shifou dakai
-    }
-    
-
-// read car data
-//  int cardata[100];//che 5ge shuju
-    string stem;//not read the first line data
-    string s;//duru shuju字符串
-    getline(carDatain,stem);//hulue di yi hang #
-//    vector<carInfo>car;//car de dong tai jie gou ti shuzui
-    while(getline(carDatain,s))// read the data line by line
-    {
-	    
-	    carInfo info;//lin shi liang
-//	    info.line="sd";//the line first
-//	    info.line=s;//read the string by line to line
-	    //字符串中取出数字
-	    char * z=(char*)s.data();
-	    const char *d= " ,()";//fen ge fu
-	    char *p;
-	    p=strtok(z,d);
-	    i=1;
-	    while(p){
-                    //transform string to number
-                    stringstream ss;
-		    ss<<p;
-		    ss>>a[i];
-		    i++;
-		    p=strtok(NULL,d);
-	    }
-	    //字符串中取出数字
-	    info.carId=a[1];//carId
-	    info.carFrom=a[2];//carFrom
-	    info.carTo=a[3];//carTo
-	    info.carHighspeed=a[4];//carHighspeed
-	    info.carPlantime=a[5];//carPlantime
-	    car.push_back(info);// push_back to car
-	    // cout<<s<<endl;//know if the s line has in the info,line
-	    carNum++;//car number + 1, total carNum;
-    }
-
-//read road data
-    getline(roadDatain,stem);//hulue di yi hang #
-//  vector<roadInfo>road;//car de dong tai jie gou ti shuzui
-    while(getline(roadDatain,s))// read the data line by line
-    {
-
-            roadInfo info;//lin shi liang
-//          info.line="sd";//the line first
-//          info.line=s;//read the string by line to line
-            //字符串中取出数字
-            char * z=(char*)s.data();
-            const char *d= " ,()";//fen ge fu
-            char *p;
-            p=strtok(z,d);
-            i=1;
-            while(p){
-                    //transform string to number
-                    stringstream ss;
-                    ss<<p;
-                    ss>>a[i];
-                    i++;
-                    p=strtok(NULL,d);
-            }
-            //字符串中取出数字
-            info.roadId=a[1];//road id
-            info.roadLength=a[2];//road length
-            info.roadHighspeed=a[3];//road high speed
-            info.roadChannel=a[4];//road channel
-            info.roadFrom=a[5];//road from crossid
-	    info.roadTo=a[6];//road to crossid
-	    info.roadIsduplex=a[7];//road isduplex?
-            road.push_back(info);// push_back to car
-            // cout<<s<<endl;//know if the s line has in the info,line
-            roadNum++;//road number + 1, total carNum;
-    }
-    for(i=0;i<roadNum;i++)//road id hao zhijie fangwei road jiegou ti
-    {
-	    roadIdtoroad[road[i].roadId]=i;
-    }
-
-//read cross data
-    getline(crossDatain,stem);//hulue di yi hang #
-//  vector<crossInfo>cross;//car de dong tai jie gou ti shuzui
-    while(getline(crossDatain,s))// read the data line by line
-    {
-
-            crossInfo info;//lin shi liang
-//          info.line="sd";//the line first
-//          info.line=s;//read the string by line to line
-            //字符串中取出数字
-            char * z=(char*)s.data();
-            const char *d= " ,()";//fen ge fu
-            char *p;
-            p=strtok(z,d);
-            i=1;
-            while(p){
-                    //transform string to number
-                    stringstream ss;
-                    ss<<p;
-                    ss>>a[i];
-                    i++;
-                    p=strtok(NULL,d);
-            }
-            //字符串中取出数字
-            info.crossId=a[1];//road id
-            info.crossRoadid_1=a[2];//cross road 1 -roadId
-            info.crossRoadid_2=a[3];//cross road 2 -roadId
-            info.crossRoadid_3=a[4];//cross road 3 -roadId
-            info.crossRoadid_4=a[5];//cross road 4 -roadId
-            
-            cross.push_back(info);// push_back to car
-            // cout<<s<<endl;//know if the s line has in the info,line
-            crossNum++;//cross number + 1, total crossNum;
-    }		    
-for(i=0;i<=crossNum;i++)
-{	
-    CROSS[cross[i].crossId].crossId=cross[i].crossId;
-    CROSS[cross[i].crossId].crossRoadid_1=cross[i].crossRoadid_1;
-    CROSS[cross[i].crossId].crossRoadid_2=cross[i].crossRoadid_2;
-    CROSS[cross[i].crossId].crossRoadid_3=cross[i].crossRoadid_3;
-    CROSS[cross[i].crossId].crossRoadid_4=cross[i].crossRoadid_4;
-}   
-for(i=0;i<=roadNum;i++)
-{
-	ROAD[road[i].roadId].roadId=road[i].roadId;
-	ROAD[road[i].roadId].roadLength=road[i].roadLength;
-	ROAD[road[i].roadId].roadHighspeed=road[i].roadHighspeed;
-	ROAD[road[i].roadId].roadChannel=road[i].roadChannel;
-	ROAD[road[i].roadId].roadFrom=road[i].roadFrom;
-	ROAD[road[i].roadId].roadTo=road[i].roadTo;
-	ROAD[road[i].roadId].roadIsduplex=road[i].roadIsduplex;
-}
-//guangdu sousuo
 struct runNote{
-	int f;// father note
-	int dis;//now the dis from firstcross to last cross
-	int crossId;//xiayigecross
-	int roadId;
+        int f;// father note
+        int dis;//now the dis from firstcross to last cross
+        int crossId;//xiayigecross
+        int roadId;
 };
+int head;
+int tail;
+int book[10000];
 
-//   struct runNote runQue[10000];//sui ditu gaibian
-   int book[10000]={0};
-   int head,tail;
-   int r_1,r_2,r_3,r_4;
-   int f_1,f_2,f_3,f_4;
-   int t_1,t_2,t_3,t_4;
-   int runNum;
-   int cFrom;
-   int cTo;
-   //CROSS[4] TO CROSS[13]
-for(i=0;i<2;i++)
+struct runNote runQue[10000];
+void runRun(int cFrom,int cTo)
 {
-   struct runNote runQue[10000];
-   cFrom=car[i].carFrom;
-   cTo=car[i].carTo;
+//   struct runNote runQue[10000];
+      int r_1=0,r_2=0,r_3=0,r_4=0;
+   int f_1=0,f_2=0,f_3=0,f_4=0;
+int t_1=0,t_2=0,t_3=0,t_4=0;
+   int i=0;
    head=1;
    tail=1;
-   book[10000]={0};
+   for(i=0;i<10000;i++)
+	   book[i]=0;
    runQue[tail].f=0;
    runQue[tail].dis=0;
    runQue[tail].crossId=cFrom;
@@ -268,7 +87,6 @@ for(i=0;i<2;i++)
    tail++;
    while(head<tail)
       { 
-	      
 	      r_1=CROSS[runQue[head].crossId].crossRoadid_1;
 	      r_2=CROSS[runQue[head].crossId].crossRoadid_2;
 	      r_3=CROSS[runQue[head].crossId].crossRoadid_3;
@@ -449,25 +267,206 @@ for(i=0;i<2;i++)
               {
                       break;
               }
+	      
 	      head++;
-      }
+       }
+}
 
-runNum=1;
-carRuninfo info;
-tail--;
+
+int main(int argc,char *argv[])
+{
+	std::cout << "Begin" << std::endl;
+
+        if(argc < 5){
+                std::cout << "please input args: carPath, roadPath, crossPath, answerPath" << std::endl;
+                exit(1);
+        }
+
+        std::string carPath(argv[1]);
+        std::string roadPath(argv[2]);
+        std::string crossPath(argv[3]);
+        std::string answerPath(argv[4]);
+
+        std::cout << "carPath is " << carPath << std::endl;
+        std::cout << "roadPath is " << roadPath << std::endl;
+        std::cout << "crossPath is " << crossPath << std::endl;
+        std::cout << "answerPath is " << answerPath << std::endl;
+        // TODO:read input filebuf
+
+    int i,j,m,n;
+    int mapToroad[101][101];//map to roadid
+    int mapToroadspeed[10001];//map to roadid xuyao zhuyi road de id fanwei
+    int k=5;//export data in answer
+    carNum=0;//car total number,from 1 to carNum
+    roadNum=0;//road total number,from 1 to roadNum
+    crossNum=0;//cross total number ,from 1 to crossNum
+    int a[10];//transform string to number
+    ifstream carDatain(carPath,ios::in);// car data in
+    ifstream roadDatain(roadPath,ios::in);// road data in
+    ifstream crossDatain(crossPath,ios::in);//cross data in
+    ofstream answerOut(answerPath);//answer out
+    if(!carDatain)//is car data open success?
+    {
+        cout<<"car.txt can not open"<<endl;//panduan wenjian shifou dakai
+    }
+    if(!roadDatain)//is road data open success?
+    {
+        cout<<"road.txt can not open"<<endl;//panduan wenjian shifou dakai
+    }
+    if(!crossDatain)//is cross data open success?
+    {
+        cout<<"cross.txt can not open"<<endl;//panduan wenjian shifou dakai
+    }
+    
+
+// read car data
+//  int cardata[100];//che 5ge shuju
+    string stem;//not read the first line data
+    string s;//duru shuju字符串
+    getline(carDatain,stem);//hulue di yi hang #
+//    vector<carInfo>car;//car de dong tai jie gou ti shuzui
+    while(getline(carDatain,s))// read the data line by line
+    {
+	    
+	    carInfo info;//lin shi liang
+//	    info.line="sd";//the line first
+//	    info.line=s;//read the string by line to line
+	    //字符串中取出数字
+	    char * z=(char*)s.data();
+	    const char *d= " ,()";//fen ge fu
+	    char *p;
+	    p=strtok(z,d);
+	    i=1;
+	    while(p){
+                    //transform string to number
+                    stringstream ss;
+		    ss<<p;
+		    ss>>a[i];
+		    i++;
+		    p=strtok(NULL,d);
+	    }
+	    //字符串中取出数字
+	    info.carId=a[1];//carId
+	    info.carFrom=a[2];//carFrom
+	    info.carTo=a[3];//carTo
+	    info.carHighspeed=a[4];//carHighspeed
+	    info.carPlantime=a[5];//carPlantime
+	    car.push_back(info);// push_back to car
+	    // cout<<s<<endl;//know if the s line has in the info,line
+	    carNum++;//car number + 1, total carNum;
+    }
+
+//read road data
+    getline(roadDatain,stem);//hulue di yi hang #
+//  vector<roadInfo>road;//car de dong tai jie gou ti shuzui
+    while(getline(roadDatain,s))// read the data line by line
+    {
+
+            roadInfo info;//lin shi liang
+//          info.line="sd";//the line first
+//          info.line=s;//read the string by line to line
+            //字符串中取出数字
+            char * z=(char*)s.data();
+            const char *d= " ,()";//fen ge fu
+            char *p;
+            p=strtok(z,d);
+            i=1;
+            while(p){
+                    //transform string to number
+                    stringstream ss;
+                    ss<<p;
+                    ss>>a[i];
+                    i++;
+                    p=strtok(NULL,d);
+            }
+            //字符串中取出数字
+            info.roadId=a[1];//road id
+            info.roadLength=a[2];//road length
+            info.roadHighspeed=a[3];//road high speed
+            info.roadChannel=a[4];//road channel
+            info.roadFrom=a[5];//road from crossid
+	    info.roadTo=a[6];//road to crossid
+	    info.roadIsduplex=a[7];//road isduplex?
+            road.push_back(info);// push_back to car
+            // cout<<s<<endl;//know if the s line has in the info,line
+            roadNum++;//road number + 1, total carNum;
+    }
+    for(i=0;i<roadNum;i++)//road id hao zhijie fangwei road jiegou ti
+    {
+	    roadIdtoroad[road[i].roadId]=i;
+    }
+
+//read cross data
+    getline(crossDatain,stem);//hulue di yi hang #
+//  vector<crossInfo>cross;//car de dong tai jie gou ti shuzui
+    while(getline(crossDatain,s))// read the data line by line
+    {
+
+            crossInfo info;//lin shi liang
+//          info.line="sd";//the line first
+//          info.line=s;//read the string by line to line
+            //字符串中取出数字
+            char * z=(char*)s.data();
+            const char *d= " ,()";//fen ge fu
+            char *p;
+            p=strtok(z,d);
+            i=1;
+            while(p){
+                    //transform string to number
+                    stringstream ss;
+                    ss<<p;
+                    ss>>a[i];
+                    i++;
+                    p=strtok(NULL,d);
+            }
+            //字符串中取出数字
+            info.crossId=a[1];//road id
+            info.crossRoadid_1=a[2];//cross road 1 -roadId
+            info.crossRoadid_2=a[3];//cross road 2 -roadId
+            info.crossRoadid_3=a[4];//cross road 3 -roadId
+            info.crossRoadid_4=a[5];//cross road 4 -roadId
+            
+            cross.push_back(info);// push_back to car
+            // cout<<s<<endl;//know if the s line has in the info,line
+            crossNum++;//cross number + 1, total crossNum;
+    }		    
+for(i=0;i<=crossNum;i++)
+{	
+    CROSS[cross[i].crossId].crossId=cross[i].crossId;
+    CROSS[cross[i].crossId].crossRoadid_1=cross[i].crossRoadid_1;
+    CROSS[cross[i].crossId].crossRoadid_2=cross[i].crossRoadid_2;
+    CROSS[cross[i].crossId].crossRoadid_3=cross[i].crossRoadid_3;
+    CROSS[cross[i].crossId].crossRoadid_4=cross[i].crossRoadid_4;
+}   
+for(i=0;i<=roadNum;i++)
+{
+	ROAD[road[i].roadId].roadId=road[i].roadId;
+	ROAD[road[i].roadId].roadLength=road[i].roadLength;
+	ROAD[road[i].roadId].roadHighspeed=road[i].roadHighspeed;
+	ROAD[road[i].roadId].roadChannel=road[i].roadChannel;
+	ROAD[road[i].roadId].roadFrom=road[i].roadFrom;
+	ROAD[road[i].roadId].roadTo=road[i].roadTo;
+	ROAD[road[i].roadId].roadIsduplex=road[i].roadIsduplex;
+}
+//guangdu sousuo
+//   struct runNote runQue[10000];//sui ditu gaibian
+int runNum;
+for(i=0;i<2;i++)
+{
+	runRun(car[i].carFrom,car[i].carTo);
+        runNum=1;
+        tail--;
 while(head>1)
 {
 
-     info.a[runNum]=runQue[tail].roadId;
-     cout<<runQue[tail].roadId<<' ';
+     carRun[i].a[runNum]=runQue[tail].roadId;
      head=runQue[tail].f;
      tail=head;
      runNum++;
-
 }
+carRun[i].a[0]=runNum-1;
+cout<<carRun[i].a[0];
 cout<<endl;
-info.a[0]=runNum-1;
-carRun.push_back(info);
 }
 //guangdu sousou
 //ceshi run road
