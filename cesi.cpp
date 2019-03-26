@@ -451,26 +451,23 @@ for(i=0;i<=roadNum;i++)
 //guangdu sousuo
 //   struct runNote runQue[10000];//sui ditu gaibian
 int runNum;
-for(i=0;i<2;i++)
+for(i=0;i<carNum;i++)
 {
 	runRun(car[i].carFrom,car[i].carTo);
         runNum=1;
         tail--;
 while(head>1)
 {
-
      carRun[i].a[runNum]=runQue[tail].roadId;
      head=runQue[tail].f;
      tail=head;
      runNum++;
 }
 carRun[i].a[0]=runNum-1;
-cout<<carRun[i].a[0];
-cout<<endl;
 }
 //guangdu sousou
 //ceshi run road
-/*    for(i=0;i<carNum;i++)
+    for(i=0;i<carNum;i++)
     {
 	    answerOut<<'('<<car[i].carId<<','<<car[i].carPlantime;
 	    for(j=carRun[i].a[0];j>=1;j--)
@@ -479,7 +476,7 @@ cout<<endl;
 	    }
 	    answerOut<<')'<<endl;
     }
-*/    answerOut<<endl;
+    answerOut<<endl;
     //close the files
     answerOut.close();//close answer.txt
     carDatain.close();//close car.txt
