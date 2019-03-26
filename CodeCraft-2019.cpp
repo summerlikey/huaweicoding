@@ -64,10 +64,10 @@ int head;
 int tail;
 int book[100000];
 
-struct runNote runQue[10000];
+struct runNote runQue[100000];
+
 void runRun(int cFrom,int cTo)
 {
-//   struct runNote runQue[10000];
       int r_1=0,r_2=0,r_3=0,r_4=0;
    int f_1=0,f_2=0,f_3=0,f_4=0;
 int t_1=0,t_2=0,t_3=0,t_4=0;
@@ -87,28 +87,28 @@ int t_1=0,t_2=0,t_3=0,t_4=0;
 	      r_2=CROSS[runQue[head].crossId].crossRoadid_2;
 	      r_3=CROSS[runQue[head].crossId].crossRoadid_3;
 	      r_4=CROSS[runQue[head].crossId].crossRoadid_4;
-	      if(r_1!=-1)
+	      if(r_1!=-1&&r_1!=0)
 	      {
 		      f_1=ROAD[r_1].roadFrom;
 	              t_1=ROAD[r_1].roadTo;
 	      }
-	      if(r_2!=-1)
+	      if(r_2!=-1&&r_2!=0)
 	      {
 		      f_2=ROAD[r_2].roadFrom;
 	              t_2=ROAD[r_2].roadTo;
 	      }
-	      if(r_3!=-1)
+	      if(r_3!=-1&&r_3!=0)
 	      {
 		      f_3=ROAD[r_3].roadFrom;
 	              t_3=ROAD[r_3].roadTo;
 	      }
-	      if(r_4!=-1)
+	      if(r_4!=-1&&r_4!=0)
 	      {
 		      f_4=ROAD[r_4].roadFrom;
 	              t_4=ROAD[r_4].roadTo;
 	      }
 	      //four
-	      if(r_1!=-1&&book[r_1]==0)
+	      if(r_1!=-1&&book[r_1]==0&&r_1!=0)
 	      {
 		      if(ROAD[r_1].roadIsduplex==0)
 		      {
@@ -147,7 +147,7 @@ int t_1=0,t_2=0,t_3=0,t_4=0;
 		      break;
 	      }
 	      //2
-	      if(r_2!=-1&&book[r_2]==0)
+	      if(r_2!=-1&&book[r_2]==0&&r_2!=0)
               {
                       if(ROAD[r_2].roadIsduplex==0)
                       {
@@ -186,7 +186,7 @@ int t_1=0,t_2=0,t_3=0,t_4=0;
                       break;
               }
 	      //3
-             if(r_3!=-1&&book[r_3]==0)
+             if(r_3!=-1&&book[r_3]==0&&r_3!=0)
               {
                       if(ROAD[r_3].roadIsduplex==0)
                       {
@@ -225,7 +225,7 @@ int t_1=0,t_2=0,t_3=0,t_4=0;
                       break;
               }
 	      //4
-             if(r_4!=-1&&book[r_4]==0)
+             if(r_4!=-1&&book[r_4]==0&&r_4!=0)
               {
                       if(ROAD[r_4].roadIsduplex==0)
                       {
@@ -310,8 +310,6 @@ int main(int argc,char *argv[])
     {
         cout<<"cross.txt can not open"<<endl;//panduan wenjian shifou dakai
     }
-    
-
 // read car data
     string stem;//not read the first line data
     string s;//duru shuju字符串
@@ -354,8 +352,6 @@ int main(int argc,char *argv[])
     {
 
             roadInfo info;//lin shi liang
-//          info.line="sd";//the line first
-//          info.line=s;//read the string by line to line
             //字符串中取出数字
             char * z=(char*)s.data();
             const char *d= " ,()";//fen ge fu
@@ -394,8 +390,6 @@ int main(int argc,char *argv[])
     {
 
             crossInfo info;//lin shi liang
-//          info.line="sd";//the line first
-//          info.line=s;//read the string by line to line
             //字符串中取出数字
             char * z=(char*)s.data();
             const char *d= " ,()";//fen ge fu
@@ -421,16 +415,16 @@ int main(int argc,char *argv[])
             // cout<<s<<endl;//know if the s line has in the info,line
             crossNum++;//cross number + 1, total crossNum;
     }		    
-for(i=0;i<=crossNum;i++)
-{	
-    CROSS[cross[i].crossId].crossId=cross[i].crossId;
-    CROSS[cross[i].crossId].crossRoadid_1=cross[i].crossRoadid_1;
-    CROSS[cross[i].crossId].crossRoadid_2=cross[i].crossRoadid_2;
-    CROSS[cross[i].crossId].crossRoadid_3=cross[i].crossRoadid_3;
-    CROSS[cross[i].crossId].crossRoadid_4=cross[i].crossRoadid_4;
-}   
-for(i=0;i<=roadNum;i++)
-{
+    for(i=0;i<crossNum;i++)
+    {	
+        CROSS[cross[i].crossId].crossId=cross[i].crossId;
+        CROSS[cross[i].crossId].crossRoadid_1=cross[i].crossRoadid_1;
+        CROSS[cross[i].crossId].crossRoadid_2=cross[i].crossRoadid_2;
+        CROSS[cross[i].crossId].crossRoadid_3=cross[i].crossRoadid_3;
+        CROSS[cross[i].crossId].crossRoadid_4=cross[i].crossRoadid_4;
+    }   
+    for(i=0;i<roadNum;i++)
+    {
 	ROAD[road[i].roadId].roadId=road[i].roadId;
 	ROAD[road[i].roadId].roadLength=road[i].roadLength;
 	ROAD[road[i].roadId].roadHighspeed=road[i].roadHighspeed;
@@ -438,23 +432,23 @@ for(i=0;i<=roadNum;i++)
 	ROAD[road[i].roadId].roadFrom=road[i].roadFrom;
 	ROAD[road[i].roadId].roadTo=road[i].roadTo;
 	ROAD[road[i].roadId].roadIsduplex=road[i].roadIsduplex;
-}
+    }
 //guangdu sousuo
-//   struct runNote runQue[10000];//sui ditu gaibian
+//   struct runNote runQue[100000];//sui ditu gaibian
 int runNum;
 for(i=0;i<carNum;i++)
 {
 	runRun(car[i].carFrom,car[i].carTo);
         runNum=1;
         tail--;
-while(head>1)
-{
-     carRun[i].a[runNum]=runQue[tail].roadId;
-     head=runQue[tail].f;
-     tail=head;
-     runNum++;
-}
-carRun[i].a[0]=runNum-1;
+     while(head>1)
+     {
+        carRun[i].a[runNum]=runQue[tail].roadId;
+        head=runQue[tail].f;
+        tail=head;
+        runNum++;
+     }
+        carRun[i].a[0]=runNum-1;
 }
 // the carPlantime
 // just kiding
