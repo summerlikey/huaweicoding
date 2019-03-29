@@ -18,12 +18,13 @@ int runCross[1000];
 int n=0;
 int m=0;
 int k=0;
-int where[100][7];//roadToarr, the car 
+int whereNow[100][7];//roadToarr, the car 
+int whereNext[100][7];//roadToarr, the car
 map<int,int>carInwhere;//car is where ({carID,where in now road})
 multimap<int,int>roadHavecarft;//({roadId,carid})//the road have cars f->t
 multimap<int,int>roadHavecartf;//({roadId,carid})//the road have cars t->f
 map<int,int>carWait;//quan ju  {carid,0} 0 zhongzhizhuangtai 1dengdai chengliang
-
+map<int,int>carInwhichroad;//car in which road ,only have one car ,so use the carInwhichroad[carId]=roadId
 //car data
 struct carInfo{
 //	string line;// read the line by line
@@ -442,10 +443,10 @@ void tanxin(int giveId,int runStarttime){
 return ;
 }
 
-int nowSpeed(int cId,int rId)
+int nowSpeed(int carId,int roadId)
 {
-	int v1=car[cId].carHighspeed;
-	int v2=ROAD[rId].roadHighspeed;
+	int v1=car[carId].carHighspeed;
+	int v2=ROAD[roadId].roadHighspeed;
 	int v=0;
 	if(v1>v2)
 		v=v2;
@@ -453,8 +454,9 @@ int nowSpeed(int cId,int rId)
 		v=v1;
 	return v;
 }
-// which cars in the road
-void roadToft(int rid)
+// which cars in the road ft
+// read nowRoad cars located
+void roadNowft(int roadId)
 {
 	int j=0;
 	int k=0;
@@ -463,9 +465,9 @@ void roadToft(int rid)
 	int num=0;
 	for(j=0;j<100;j++)
                 for(k=0;k<7;k++)
-                        where[j][k]=0;
-        auto roadHavecariterft=roadHavecarft.find(rid);//
-        auto numIterft=roadHavecarft.count(rid);//how many cars
+                        whereNow[j][k]=0;
+        auto roadHavecariterft=roadHavecarft.find(roadId);//
+        auto numIterft=roadHavecarft.count(roadId);//how many cars
                 while(numIterft)
                 {
                         item1=roadHavecariterft->second;//car id;
@@ -475,7 +477,37 @@ void roadToft(int rid)
                         {
                                 if(item2<100)
                                 {
-                                        where[item2][num]=item1;
+                                        whereNow[item2][num]=item1;
+                                }
+                                item2=item2-100;
+                                num++;
+                        }
+                        ++roadHavecariterft;
+                        --numIterft;
+                }
+}
+void roadNextft(int roadId)
+{
+        int j=0;
+        int k=0;
+        int item1=0;
+        int item2=0;
+        int num=0;
+        for(j=0;j<100;j++)
+                for(k=0;k<7;k++)
+                        whereNext[j][k]=0;
+        auto roadHavecariterft=roadHavecarft.find(roadId);//
+        auto numIterft=roadHavecarft.count(roadId);//how many cars
+                while(numIterft)
+                {
+                        item1=roadHavecariterft->second;//car id;
+                        item2=carInwhere.find(item1)->second;//
+                        num=0;
+                        while(item2>=0)
+                        {
+                                if(item2<100)
+                                {
+                                        whereNext[item2][num]=item1;
                                 }
                                 item2=item2-100;
                                 num++;
@@ -485,9 +517,71 @@ void roadToft(int rid)
                 }
 }
 
-void dealMarkz(int rId)//3
+//which cars in the road tf
+void roadNowtf(int roadId)
 {
-	roadToft(rId);
+        int j=0;
+        int k=0;
+        int item1=0;
+        int item2=0;
+        int num=0;
+        for(j=0;j<100;j++)
+                for(k=0;k<7;k++)
+                        whereNow[j][k]=0;
+        auto roadHavecaritertf=roadHavecartf.find(roadId);//
+        auto numItertf=roadHavecartf.count(roadId);//how many cars
+                while(numItertf)
+                {
+                        item1=roadHavecaritertf->second;//car id;
+                        item2=carInwhere.find(item1)->second;//
+                        num=0;
+                        while(item2>=0)
+                        {
+                                if(item2<100)
+                                {
+                                        whereNow[item2][num]=item1;
+                                }
+                                item2=item2-100;
+                                num++;
+                        }
+                        ++roadHavecaritertf;
+                        --numItertf;
+                }
+}
+void roadNexttf(int roadId)
+{
+        int j=0;
+        int k=0;
+        int item1=0;
+        int item2=0;
+        int num=0;
+        for(j=0;j<100;j++)
+                for(k=0;k<7;k++)
+                        whereNext[j][k]=0;
+        auto roadHavecaritertf=roadHavecartf.find(roadId);//
+        auto numItertf=roadHavecartf.count(roadId);//how many cars
+                while(numItertf)
+                {
+                        item1=roadHavecaritertf->second;//car id;
+                        item2=carInwhere.find(item1)->second;//
+                        num=0;
+                        while(item2>=0)
+                        {
+                                if(item2<100)
+                                {
+                                        whereNext[item2][num]=item1;
+                                }
+                                item2=item2-100;
+                                num++;
+                        }
+                        ++roadHavecaritertf;
+                        --numItertf;
+                }
+}
+
+void dealMarkz(int roadId)//3
+{
+	roadNowft(roadId);
 	int carV=0;
 	int num=0;
 	int l=0;
@@ -498,33 +592,59 @@ void dealMarkz(int rId)//3
 	{
 		for(j=1;j<=6;j++)
 		{
-			if(carWait.find(where[i][j])->second==0)
+			if(carWait.find(whereNow[i][j])->second==0)
 			{
-				carV=nowSpeed(where[i][j],rId);
+				carV=nowSpeed(whereNow[i][j],roadId);
 				for(num=1;num<=carV;num++)
 				{
 					l=i-carV;
-					if(where[l][j]!=0)
+					if(whereNow[l][j]!=0)
 					{
-						carInwhere[where[i][j]]=j*100+l+1;
+						carInwhere[whereNow[i][j]]=j*100+l+1;
 						
-						where[i][j]=0;
+						whereNow[i][j]=0;
 						flag=1;
 						break;
 					}
 				}
 				if(flag==0)
 				{
-					carInwhere[where[i][j]]=j*100+i-carV;
+					carInwhere[whereNow[i][j]]=j*100+i-carV;
 				}
 			}
 		}
 	}
+	//tf
+	roadNowtf(roadId);
+        for(i=0;i<100;i++)
+        {
+                for(j=1;j<=6;j++)
+                {
+                        if(carWait.find(whereNow[i][j])->second==0)
+                        {
+                                carV=nowSpeed(whereNow[i][j],roadId);
+                                for(num=1;num<=carV;num++)
+                                {
+                                        l=i-carV;
+                                        if(whereNow[l][j]!=0)
+                                        {
+                                                carInwhere[whereNow[i][j]]=j*100+l+1;
+
+                                                whereNow[i][j]=0;
+                                                flag=1;
+                                                break;
+                                        }
+                                }
+                                if(flag==0)
+                                {
+                                        carInwhere[whereNow[i][j]]=j*100+i-carV;
+                                }
+                        }
+                }
+        }
 }
 
-
-
-void markCarstop(int rid)//2 first markCarcancross(int rid) then markCarstop
+void markCarstop(int roadId)//2 first markCarcancross(int rid) then markCarstop
 {
 	// mark all car
         int l=0;
@@ -534,57 +654,101 @@ void markCarstop(int rid)//2 first markCarcancross(int rid) then markCarstop
 	int item=0;
 	int carV=0;
 	int flag=0;
-        roadToft(rid);
+        roadNowft(roadId);
 	for(i=0;i<100;i++)
 	{
 		for(j=1;j<=6;j++)
 		{
-			item=carWait.find(where[i][j])->second;
-			if(where[i][j]!=0&&item==0)
+			item=carWait.find(whereNow[i][j])->second;
+			if(whereNow[i][j]!=0&&item==0)
 			{
-				carV=nowSpeed(where[i][j],rid);
+				carV=nowSpeed(whereNow[i][j],roadId);
 				for(k=1;k<=carV;k++)
 				{
 					l=i-k;
-					if(where[l][j]!=0)
+					if(whereNow[l][j]!=0)
 					{
 						flag=1;
-						if(carWait.find(where[l][j])->second==0)
-							carWait[where[i][j]]=0;
+						if(carWait.find(whereNow[l][j])->second==0)
+							carWait[whereNow[i][j]]=0;
 						else
-							carWait[where[i][j]]=1;
+							carWait[whereNow[i][j]]=1;
 						break;
 					}
 				}
 				if(flag==0)
-					carWait[where[i][j]]=0;
-
+					carWait[whereNow[i][j]]=0;
 			}
 		}
 	}
+	//the tf
+	roadNowtf(roadId);
+        for(i=0;i<100;i++)
+        {
+                for(j=1;j<=6;j++)
+                {
+                        item=carWait.find(whereNow[i][j])->second;
+                        if(whereNow[i][j]!=0&&item==0)
+                        {
+                                carV=nowSpeed(whereNow[i][j],roadId);
+                                for(k=1;k<=carV;k++)
+                                {
+                                        l=i-k;
+                                        if(whereNow[l][j]!=0)
+                                        {
+                                                flag=1;
+                                                if(carWait.find(whereNow[l][j])->second==0)
+                                                        carWait[whereNow[i][j]]=0;
+                                                else
+                                                        carWait[whereNow[i][j]]=1;
+                                                break;
+                                        }
+                                }
+                                if(flag==0)
+                                        carWait[whereNow[i][j]]=0;
+                        }
+                }
+        }
+
 }
 
 
-void markCarcancross(int rid)//1 mark can across the cross
+void markCarcancross(int roadId)//1 mark can across the cross
 {
 	// mark all car
         int k=0;
 	int j=0;
-	roadToft(rid);
+	roadNowft(roadId);
                 for(k=1;k<7;k++)//mark can arrive the cross
                 {
                         for(j=0;j<100;j++)
                         {
-                                if(where[j][k]!=0)
+                                if(whereNow[j][k]!=0)
                                 {
-                                        if(j<nowSpeed(where[j][k],rid))
+                                        if(j<nowSpeed(whereNow[j][k],roadId))
                                         {
-                                                carWait.insert({where[j][k],1});
+                                                carWait.insert({whereNow[j][k],1});
                                                 break;
                                         }
                                 }
                         }
                 }
+        roadNowtf(roadId);
+                for(k=1;k<7;k++)//mark can arrive the cross
+                {
+                        for(j=0;j<100;j++)
+                        {
+                                if(whereNow[j][k]!=0)
+                                {
+                                        if(j<nowSpeed(whereNow[j][k],roadId))
+                                        {
+                                                carWait.insert({whereNow[j][k],1});
+                                                break;
+                                        }
+                                }
+                        }
+                }
+	return;
 }
 //the crossRoadid
 int crossRoad(int crossId)
@@ -688,11 +852,142 @@ int carDirection(int carId,int nowRoadid)
 		}
 	}
 }
+//add the car in which road
+void addCarinroad(int carId,int crossId,int nextRoadid)
+{
+	if(crossId==ROAD[nextRoadid].roadFrom)
+	{
+		//FT
+		roadHavecarft.insert({nextRoadid,carId});
+	}
+	else
+	{
+		roadHavecartf.insert({nextRoadid,carId});
+	}
+}
+
+//erase the car in which road 
+void eraseCarinroad(int carId,int crossId,int roadId)
+{
+	if(ROAD[roadId].roadTo==crossId)
+	{
+		//it is ft
+		auto roa=roadHavecarft.find(roadId);
+		auto num=roadHavecarft.count(roadId);
+		while(num){
+			if(roa->second==carId)
+			{
+				roadHavecarft.erase(roa);
+			}
+			++roa;
+			--num;
+		}
+	}
+	else
+	{
+		auto roa=roadHavecartf.find(roadId);
+		auto num=roadHavecartf.count(roadId);
+		while(num){
+			if(roa->second==carId)
+			{
+				roadHavecartf.erase(roa);
+				break;
+			}
+			++roa;
+			--num;
+		}
+	}
+	return;
+}
+
 
 //one cross deal 1 the straight
-void carStraight(int carId,int nowRoadid)
+void carStraight(int carId,int nowRoadid,int crossId)
 {
-
+	int now=0;
+	int next=0;
+	int nextRoadid=carNextroadid(carId,nowRoadid);
+	if(ROAD[nowRoadid].roadTo==crossId)
+		now=1;//1 is ft 0is tf
+	else
+		now=1;
+	if(ROAD[nextRoadid].roadFrom==crossId)
+		next=1;
+	else
+		next=0;
+	int v1=nowSpeed(carId,nowRoadid);
+	int v2=nowSpeed(carId,nextRoadid);
+	int s1=0;
+	int s2=0;
+	int item=0;
+	int che=0;
+	int i=0;
+	int j=0;
+	int k=0;
+	int flag=0;//no weizi
+	int l=ROAD[nextRoadid].roadLength;
+	che=ROAD[nextRoadid].roadChannel;
+	if(now==1&&next==1)
+	{
+		roadNowft(nowRoadid);// this road all car located
+		roadNextft(nextRoadid);
+		s1=carInwhere.find(carId)->second%100;
+		if(s1>=v2)
+			s2=0;
+		else
+		{
+			s2=v2-s1;
+			if(s2<=0)
+				s2=0;
+		}
+		if(s2==0)
+		{
+			item=carInwhere.find(carId)->second/100*100;
+			carInwhere[carId]=item;
+			carWait[carId]=0;
+		}
+		if(s2>0)
+		{
+			for(j=1;j<=che;j++)
+			{
+				for(i=l-1;i>=l-1-s2+1;i--)
+				{
+					if(whereNext[i][j]==0)
+					{
+						if(i==l-s2)
+						{
+							eraseCarinroad(carId,crossId,nowRoadid);
+							addCarinroad(carId,crossId,nextRoadid);
+							carInwhere[carId]=i+che*100;
+							flag=1;
+							break;
+						}
+					}
+					if(whereNext[i][j]!=1)
+					{
+						if(i==l-1)
+							break;
+						if(i!=l-1)
+						{
+							eraseCarinroad(carId,crossId,nowRoadid);
+							addCarinroad(carId,crossId,nextRoadid);
+							carInwhere[carId]=i+1+che*100;
+							flag=1;
+							break;
+						}
+					}
+					if(i==l-s2&&j==che)
+					{
+						item=carInwhere.find(carId)->second/100*100;
+						carInwhere[carId]=item;
+						carWait[carId]=0;
+					}
+				}
+				if(flag==1)
+					break;
+			}
+		}
+	}
 }
 // one cross deal 2 the left
 void carLeft(int carId,int nowRoadid)
@@ -704,18 +999,271 @@ void carRight(int carId,int nowRoadid)
 {
 
 }
-
-
 // one cross
 void crossDeal(int crossId)
 {
 	int flag=0;
+	int flag1=0;
+	int c[5];
+	int item=0;
+	int i=0;
+	int j;
+	int k;
+	int v=0;
+	for(i=0;i<5;i++)
+		c[i]=0;
+	c[1]=CROSS[crossId].crossRoadid_1;//road1
+	c[2]=CROSS[crossId].crossRoadid_2;//road2
+	c[3]=CROSS[crossId].crossRoadid_3;//road3
+	c[4]=CROSS[crossId].crossRoadid_4;//road4
+	for(i=1;i<4;i++)
+	{
+		for(j=i+1;j<=4;j++)
+		{
+		
+			if(c[i]>c[j])
+			{
+				item=c[i];
+				c[i]=c[j];
+				c[j]=item;
+			}
+		}
+	}
 	while(flag=0)
 	{
-		
-		
+		//stright
+		for(i=1;i<=4;i++)
+		{
+			if(c[i]==-1)
+				continue;
+			if(ROAD[c[i]].roadIsduplex==0)
+			{
+				if(crossId==ROAD[c[i]].roadFrom)
+					continue;//not deal
+			}
+			if(crossId==ROAD[c[i]].roadTo)
+			{
+				flag1=0;
+				//deal the ft of the road
+				roadNowft(c[i]);//car wher and the id in 
+				for(j=0;j<100;j++)
+				{
+					for(k=1;k<7;k++)
+					{
+						if(carDirection(whereNow[j][k],c[i])!=1)
+						{
+							flag1=1;
+							break;
+						}
+						if(whereNow[j][k]!=0&&carWait.find(whereNow[j][k])->second==1)
+						{
+							v=nowSpeed(whereNow[j][k],c[i]);
+							if(j-v<0)
+							{
+									carStraight(whereNow[j][k],c[i],crossId);
+							}
+							else
+							{
+								carInwhere[whereNow[j][k]]=k*100+j-v;//gengxinweizi
+								carWait[whereNow[j][k]]=0;
+							}
+						}
+					}
+					if(flag1==1)
+						break;
+				}
+			}
+			if(crossId==ROAD[c[i]].roadFrom)
+			{
+				flag1=0;
+				//tf
+				roadNowtf(c[i]);
+				for(j=0;j<100;j++)
+				{
+					for(k=1;k<7;k++)
+					{
+						if(carDirection(whereNow[j][k],c[i])!=1)
+						{
+							flag1=1;
+							break;
+						}
+						if(whereNow[j][k]!=0&&carWait.find(whereNow[j][k])->second==1)
+						{
+                                                        v=nowSpeed(whereNow[j][k],c[i]);
+                                                        if(j-v<0)
+                                                        {
+                                                                        carStraight(whereNow[j][k],c[i],crossId);
+                                                        }
+                                                        else
+                                                        {
+                                                                carInwhere[whereNow[j][k]]=k*100+j-v;//gengxinweizi
+                                                                carWait[whereNow[j][k]]=0;
+                                                        }
 
+						}
+					}
+				}
+			}
+
+		}
+		//left
+                for(i=1;i<=4;i++)
+                {
+                        if(c[i]==-1)
+                                continue;
+                        if(ROAD[c[i]].roadIsduplex==0)
+                        {
+                                if(crossId==ROAD[c[i]].roadFrom)
+                                        continue;//not deal
+                        }
+                        if(crossId==ROAD[c[i]].roadTo)
+                        {
+                                flag1=0;
+                                //deal the ft of the road
+                                roadNowft(c[i]);//car wher and the id in 
+                                for(j=0;j<100;j++)
+                                {
+                                        for(k=1;k<7;k++)
+                                        {
+                                                if(carDirection(whereNow[j][k],c[i])!=1)
+                                                {
+                                                        flag1=1;
+                                                        break;
+                                                }
+                                                if(whereNow[j][k]!=0&&carWait.find(whereNow[j][k])->second==1)
+                                                {
+                                                        v=nowSpeed(whereNow[j][k],c[i]);
+                                                        if(j-v<0)
+                                                        {
+                                                                        carStraight(whereNow[j][k],c[i],crossId);
+                                                        }
+                                                        else
+                                                        {
+                                                                carInwhere[whereNow[j][k]]=k*100+j-v;//gengxinweizi
+                                                                carWait[whereNow[j][k]]=0;
+                                                        }
+                                                }
+                                        }
+                                        if(flag1==1)
+                                                break;
+                                }
+                        }
+                        if(crossId==ROAD[c[i]].roadFrom)
+                        {
+                                flag1=0;
+                                //tf
+                                roadNowtf(c[i]);
+                                for(j=0;j<100;j++)
+                                {
+                                        for(k=1;k<7;k++)
+                                        {
+                                                if(carDirection(whereNow[j][k],c[i])!=1)
+                                                {
+                                                        flag1=1;
+                                                        break;
+                                                }
+                                                if(whereNow[j][k]!=0&&carWait.find(whereNow[j][k])->second==1)
+                                                {
+                                                        v=nowSpeed(whereNow[j][k],c[i]);
+                                                        if(j-v<0)
+                                                        {
+                                                                        carStraight(whereNow[j][k],c[i],crossId);
+                                                        }
+                                                        else
+                                                        {
+                                                                carInwhere[whereNow[j][k]]=k*100+j-v;//gengxinweizi
+                                                                carWait[whereNow[j][k]]=0;
+                                                        }
+
+                                                }
+                                        }
+                                }
+                        }
+
+                }
+               //roght
+                for(i=1;i<=4;i++)
+                {
+                        if(c[i]==-1)
+                                continue;
+                        if(ROAD[c[i]].roadIsduplex==0)
+                        {
+                                if(crossId==ROAD[c[i]].roadFrom)
+                                        continue;//not deal
+                        }
+                        if(crossId==ROAD[c[i]].roadTo)
+                        {
+                                flag1=0;
+                                //deal the ft of the road
+                                roadNowft(c[i]);//car wher and the id in 
+                                for(j=0;j<100;j++)
+                                {
+                                        for(k=1;k<7;k++)
+                                        {
+                                                if(carDirection(whereNow[j][k],c[i])!=1)
+                                                {
+                                                        flag1=1;
+                                                        break;
+                                                }
+                                                if(whereNow[j][k]!=0&&carWait.find(whereNow[j][k])->second==1)
+                                                {
+                                                        v=nowSpeed(whereNow[j][k],c[i]);
+                                                        if(j-v<0)
+                                                        {
+                                                                        carStraight(whereNow[j][k],c[i],crossId);
+                                                        }
+                                                        else
+                                                        {
+                                                                carInwhere[whereNow[j][k]]=k*100+j-v;//gengxinweizi
+                                                                carWait[whereNow[j][k]]=0;
+                                                        }
+                                                }
+                                        }
+                                        if(flag1==1)
+                                                break;
+                                }
+                        }
+                        if(crossId==ROAD[c[i]].roadFrom)
+                        {
+                                flag1=0;
+                                //tf
+                                roadNowtf(c[i]);
+                                for(j=0;j<100;j++)
+                                {
+                                        for(k=1;k<7;k++)
+                                        {
+                                                if(carDirection(whereNow[j][k],c[i])!=1)
+                                                {
+                                                        flag1=1;
+                                                        break;
+                                                }
+                                                if(whereNow[j][k]!=0&&carWait.find(whereNow[j][k])->second==1)
+                                                {
+                                                        v=nowSpeed(whereNow[j][k],c[i]);
+                                                        if(j-v<0)
+                                                        {
+                                                                        carStraight(whereNow[j][k],c[i],crossId);
+                                                        }
+                                                        else
+                                                        {
+                                                                carInwhere[whereNow[j][k]]=k*100+j-v;//gengxinweizi
+                                                                carWait[whereNow[j][k]]=0;
+                                                        }
+                                                }
+                                        }
+                                }
+                        }
+                }
 	}
+}
+//panduan dao jishua shijian de car can go
+void carCanmove(int carId)
+{
+	//if can deal it
+	//return;
+	//if not can 
+	//car[carId].carPlantime++;
+	//return;
 }
 
 int main(int argc,char *argv[])
@@ -909,6 +1457,7 @@ for(i=0;i<carNum;i++)
 */
 //kiding
 //my algo
+/*
 for(i=0;i<roadNum;i++){
 	if(road[i].roadIsduplex=1)
 	{
@@ -920,6 +1469,7 @@ for(i=0;i<roadNum;i++){
 		roadMapft.insert({road[i].roadId,0});
 	}
 }
+*/
 //i is the  car's number
 int NOWTIME=0;
 int solve;//mark if all car arrive
@@ -934,7 +1484,18 @@ int solve;//mark if all car arrive
         markCarcancross(5000);//1
 	markCarstop(5000);//2
 	dealMarkz(5000);//3	
-	cout<<carInwhere.find(2)->second<<endl;
+	cout<<carInwhere.find(4)->second<<endl;
+	addCarinroad(5,2,5001);
+	addCarinroad(9,2,5001);
+	addCarinroad(10,2,5001);
+	addCarinroad(55,2,5001);
+	eraseCarinroad(1,2,5000);
+	addCarinroad(51,2,5000);
+	cout<<roadHavecartf.count(5000);
+	cout<<roadHavecarft.count(5000);
+	cout<<roadHavecarft.count(5001);
+	roadHavecarft.erase(5000);
+	roadHavecarft.insert({5000,5});
 
 /*
 while(solve==0)
@@ -962,8 +1523,19 @@ while(solve==0)
 		markCarstop(roId);//2
 		dealMarkz(roId);//3
 	}
-	//deal the cross
-	int flag=0;	
+	//deal the all the cross
+	for(i=0;i<crossNum;i++)
+	{
+		crossDeal(cross[i].crossId);
+	}
+	//deal the car have not on the road
+	for(i=0;i<carNum;i++)
+	{
+		if(car[i].carPlantime==NOWTIME)
+		{
+			carCanmove(i);
+		}
+	}
 }
 */
 //233333
