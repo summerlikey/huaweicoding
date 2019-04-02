@@ -57,7 +57,7 @@ struct crossInfo{
 	int crossRoadid_4;//roadId
 };
 vector<crossInfo>cross;
-struct crossInfo CROSS[500]={0,0,0,0,0};
+struct crossInfo CROSS[10000];
 struct roadInfo ROAD[10000]={0,0,0,0,0,0,0};
 //run road cunchu//car run
 struct carRuninfo{
@@ -79,6 +79,9 @@ struct runNote runQue[100000];
 multimap<int,int>roadMapft;
 multimap<int,int>roadMaptf;
 multimap<int,int>runWithspeed;
+int carDirection(int carId,int nowRoadid);
+void eraseCarinroad(int carId,int crossId,int roadId);
+
 void runRun(int cFrom,int cTo)
 {
 	memset(runQue,0,sizeof(struct runNote)*100000);
@@ -590,10 +593,23 @@ void dealMarkz(int roadId)//3
 	int i=0;
 	int j=0;
 	flag=0;
-	for(i=0;i<100;i++)
+	int l1=ROAD[roadId].roadLength;
+	int c1=ROAD[roadId].roadChannel;
+	for(i=0;i<l1;i++)
 	{
-		for(j=1;j<=6;j++)
+		for(j=1;j<=c1;j++)
 		{
+			if(carDirection(whereNow[i][j],roadId)==0&&(carWait.find(whereNow[i][j])->second==0))
+			{
+				carV=nowSpeed(whereNow[i][j],roadId);
+				if(carV>=3){
+				eraseCarinroad(whereNow[i][j],car[whereNow[i][j]].carTo,roadId);
+				carInwhere.erase(whereNow[i][j]);
+				carWait.erase(whereNow[i][j]);
+				}
+
+			}
+
 			if(carWait.find(whereNow[i][j])->second==2)
 				break;
 			if(carWait.find(whereNow[i][j])->second==0)
@@ -620,11 +636,22 @@ void dealMarkz(int roadId)//3
 	//tf
 	flag=0;
 	roadNowtf(roadId);
-        for(i=0;i<100;i++)
+        for(i=0;i<l1;i++)
         {
-                for(j=1;j<=6;j++)
+                for(j=1;j<=c1;j++)
                 {
-                        if(carWait.find(whereNow[i][j])->second==0)
+                        if(carDirection(whereNow[i][j],roadId)==0&&(carWait.find(whereNow[i][j])->second==0))
+                        {
+                                carV=nowSpeed(whereNow[i][j],roadId);
+                                if(carV>=3){
+                                eraseCarinroad(whereNow[i][j],car[whereNow[i][j]].carTo,roadId);
+                                carInwhere.erase(whereNow[i][j]);
+                                carWait.erase(whereNow[i][j]);
+                                }
+
+                        }
+
+			if(carWait.find(whereNow[i][j])->second==0)
                         {
                                 carV=nowSpeed(whereNow[i][j],roadId);
                                 for(num=1;num<=carV;num++)
@@ -650,6 +677,7 @@ void dealMarkz(int roadId)//3
 void markCarstop(int roadId)//2 first markCarcancross(int rid) then markCarstop
 {
 	// mark all car
+	int roadChannel;
         int l=0;
         int k=0;
 	int i=0;
@@ -657,10 +685,16 @@ void markCarstop(int roadId)//2 first markCarcancross(int rid) then markCarstop
 	int item=0;
 	int carV=0;
 	int flag=0;
+	int l1=0;
+	int c1=0;
+
+	c1=ROAD[roadId].roadChannel;
+	l1=ROAD[roadId].roadLength;
+
         roadNowft(roadId);
-	for(i=0;i<100;i++)
+	for(i=0;i<l1;i++)
 	{
-		for(j=1;j<=6;j++)
+		for(j=1;j<c1;j++)
 		{
 			if(carWait.find(whereNow[i][j])->second==2)
 				break;
@@ -691,9 +725,9 @@ void markCarstop(int roadId)//2 first markCarcancross(int rid) then markCarstop
 	}
 	//the tf
 	roadNowtf(roadId);
-        for(i=0;i<100;i++)
+        for(i=0;i<l1;i++)
         {
-                for(j=1;j<=6;j++)
+                for(j=1;j<=c1;j++)
                 {
                         item=carWait.find(whereNow[i][j])->second;
 			if(carWait.find(whereNow[i][j])->second==2)
@@ -723,19 +757,19 @@ void markCarstop(int roadId)//2 first markCarcancross(int rid) then markCarstop
         }
 
 }
-
-
 void markCarcancross(int roadId)//1 mark can across the cross
 {
 	// mark all car
         int k=0;
 	int j=0;
+	int l1=ROAD[roadId].roadLength;
+	int c1=ROAD[roadId].roadChannel;
 	roadNowft(roadId);
-                for(k=1;k<7;k++)//mark can arrive the cross
+                for(k=1;k<=c1;k++)//mark can arrive the cross
                 {
-                        for(j=0;j<100;j++)
+                        for(j=0;j<l1;j++)
                         {
-                                if(whereNow[j][k]!=0&&(carWait.find(whereNow[j][k])->second!=2))
+                                if(whereNow[j][k]!=0)
                                 {
                                         if(j<nowSpeed(whereNow[j][k],roadId))
                                         {
@@ -746,11 +780,11 @@ void markCarcancross(int roadId)//1 mark can across the cross
                         }
                 }
         roadNowtf(roadId);
-                for(k=1;k<7;k++)//mark can arrive the cross
+                for(k=1;k<c1;k++)//mark can arrive the cross
                 {
-                        for(j=0;j<100;j++)
+                        for(j=0;j<l1;j++)
                         {
-                                if(whereNow[j][k]!=0&&carWait.find(whereNow[j][k])->second!=2)
+                                if(whereNow[j][k]!=0)
                                 {
                                         if(j<nowSpeed(whereNow[j][k],roadId))
                                         {
@@ -792,7 +826,6 @@ int carNextroadid(int carId,int nowRoadid)
 		}
 	}
 }
-
 //which cross car may be across
 int whichCrossid(int carId,int nowRoadid)
 {
@@ -932,13 +965,18 @@ void carStraight(int carId,int nowRoadid,int crossId)
 	int s1=0;
 	int s2=0;
 	int item=0;
-	int che=0;
+	int c1=0;
+	int c2=0;
+	int l1=0;
+	int l2=0;
 	int i=0;
 	int j=0;
 	int k=0;
 	int flag=0;//no weizi
-	int l=ROAD[nextRoadid].roadLength;
-	che=ROAD[nextRoadid].roadChannel;
+	l1=ROAD[nowRoadid].roadLength;
+	l2=ROAD[nextRoadid].roadLength;
+	c1=ROAD[nowRoadid].roadChannel;
+	c2=ROAD[nowRoadid].roadChannel;
 	//
 	if(now==1&&next==1)
 	{
@@ -961,17 +999,17 @@ void carStraight(int carId,int nowRoadid,int crossId)
 		}
 		if(s2>0)
 		{
-			for(j=1;j<=che;j++)
+			for(j=1;j<=c2;j++)
 			{
-				for(i=l-1;i>=l-1-s2+1;i--)
+				for(i=l2-1;i>=l2-1-s2+1;i--)
 				{
 					if(whereNext[i][j]==0)
 					{
-						if(i==l-s2)
+						if(i==l2-s2)
 						{
 							eraseCarinroad(carId,crossId,nowRoadid);
 							addCarinroad(carId,crossId,nextRoadid);
-							carInwhere[carId]=i+che*100;
+							carInwhere[carId]=i+c2*100;
 							carWait[carId]=2;
 							flag=1;
 							break;
@@ -979,19 +1017,19 @@ void carStraight(int carId,int nowRoadid,int crossId)
 					}
 					if(whereNext[i][j]!=1)
 					{
-						if(i==l-1)
+						if(i==l2-1)
 							break;
-						if(i!=l-1)
+						if(i!=l2-1)
 						{
 							eraseCarinroad(carId,crossId,nowRoadid);
 							addCarinroad(carId,crossId,nextRoadid);
-							carInwhere[carId]=i+1+che*100;
+							carInwhere[carId]=i+1+c2*100;
 							carWait[carId]=2;
 							flag=1;
 							break;
 						}
 					}
-					if(i==l-s2&&j==che)
+					if(i==l2-s2&&j==c2)
 					{
 						item=carInwhere.find(carId)->second/100*100;
 						carInwhere[carId]=item;
@@ -1032,17 +1070,17 @@ void carStraight(int carId,int nowRoadid,int crossId)
 		}
 		if(s2>0)
 		{
-			for(j=1;j<=che;j++)
+			for(j=1;j<=c2;j++)
 			{
-				for(i=l-1;i>=l-1-s2+1;i--)
+				for(i=l2-1;i>=l2-1-s2+1;i--)
 				{
 					if(whereNext[i][j]==0)
 					{
-						if(i==l-s2)
+						if(i==l2-s2)
 						{
 							eraseCarinroad(carId,crossId,nowRoadid);
 							addCarinroad(carId,crossId,nextRoadid);
-							carInwhere[carId]=i+che*100;
+							carInwhere[carId]=i+c2*100;
 							carWait[carId]=2;
 							flag=1;
 							break;
@@ -1050,19 +1088,19 @@ void carStraight(int carId,int nowRoadid,int crossId)
 					}
 					if(whereNext[i][j]!=1)
 					{
-						if(i==l-1)
+						if(i==l2-1)
 							break;
-						if(i!=l-1)
+						if(i!=l2-1)
 						{
 							eraseCarinroad(carId,crossId,nowRoadid);
 							addCarinroad(carId,crossId,nextRoadid);
-							carInwhere[carId]=i+1+che*100;
+							carInwhere[carId]=i+1+c2*100;
 							carWait[carId]=2;
 							flag=1;
 							break;
 						}
 					}
-					if(i==l-s2&&j==che)
+					if(i==l2-s2&&j==c2)
 					{
 						item=carInwhere.find(carId)->second/100*100;
 						carInwhere[carId]=item;
@@ -1103,17 +1141,17 @@ void carStraight(int carId,int nowRoadid,int crossId)
 		}
 		if(s2>0)
 		{
-			for(j=1;j<=che;j++)
+			for(j=1;j<=c2;j++)
 			{
-				for(i=l-1;i>=l-1-s2+1;i--)
+				for(i=l2-1;i>=l2-1-s2+1;i--)
 				{
 					if(whereNext[i][j]==0)
 					{
-						if(i==l-s2)
+						if(i==l2-s2)
 						{
 							eraseCarinroad(carId,crossId,nowRoadid);
 							addCarinroad(carId,crossId,nextRoadid);
-							carInwhere[carId]=i+che*100;
+							carInwhere[carId]=i+c2*100;
 							carWait[carId]=2;
 							flag=1;
 							break;
@@ -1121,19 +1159,19 @@ void carStraight(int carId,int nowRoadid,int crossId)
 					}
 					if(whereNext[i][j]!=1)
 					{
-						if(i==l-1)
+						if(i==l2-1)
 							break;
-						if(i!=l-1)
+						if(i!=l2-1)
 						{
 							eraseCarinroad(carId,crossId,nowRoadid);
 							addCarinroad(carId,crossId,nextRoadid);
-							carInwhere[carId]=i+1+che*100;
+							carInwhere[carId]=i+1+c2*100;
 							carWait[carId]=2;
 							flag=1;
 							break;
 						}
 					}
-					if(i==l-s2&&j==che)
+					if(i==l2-s2&&j==c2)
 					{
 						item=carInwhere.find(carId)->second/100*100;
 						carInwhere[carId]=item;
@@ -1174,17 +1212,17 @@ void carStraight(int carId,int nowRoadid,int crossId)
 		}
 		if(s2>0)
 		{
-			for(j=1;j<=che;j++)
+			for(j=1;j<=c2;j++)
 			{
-				for(i=l-1;i>=l-1-s2+1;i--)
+				for(i=l2-1;i>=l2-1-s2+1;i--)
 				{
 					if(whereNext[i][j]==0)
 					{
-						if(i==l-s2)
+						if(i==l2-s2)
 						{
 							eraseCarinroad(carId,crossId,nowRoadid);
 							addCarinroad(carId,crossId,nextRoadid);
-							carInwhere[carId]=i+che*100;
+							carInwhere[carId]=i+c2*100;
 							carWait[carId]=2;
 							flag=1;
 							break;
@@ -1192,19 +1230,19 @@ void carStraight(int carId,int nowRoadid,int crossId)
 					}
 					if(whereNext[i][j]!=1)
 					{
-						if(i==l-1)
+						if(i==l2-1)
 							break;
-						if(i!=l-1)
+						if(i!=l2-1)
 						{
 							eraseCarinroad(carId,crossId,nowRoadid);
 							addCarinroad(carId,crossId,nextRoadid);
-							carInwhere[carId]=i+1+che*100;
+							carInwhere[carId]=i+1+c2*100;
 							carWait[carId]=2;
 							flag=1;
 							break;
 						}
 					}
-					if(i==l-s2&&j==che)
+					if(i==l2-s2&&j==c2)
 					{
 						item=carInwhere.find(carId)->second/100*100;
 						carInwhere[carId]=item;
@@ -1302,9 +1340,13 @@ void crossDeal(int crossId)
 			}
 		}
 	}
+        flag=0;
 	while(flag==0)
 	{
 		flag=isAlldeal(crossId);
+cout<<' '<<flag<<endl;
+		if(flag==1)
+			return;
 		//stright
 		for(i=1;i<=4;i++)
 		{
@@ -1425,6 +1467,7 @@ void crossDeal(int crossId)
                                                         }
                                                         else
                                                         {
+
                                                                 carInwhere[whereNow[j][k]]=k*100+j-v;//gengxinweizi
                                                                 carWait[whereNow[j][k]]=0;
                                                         }
@@ -1471,7 +1514,7 @@ void crossDeal(int crossId)
                         }
 
                 }
-               //roght
+               //right
                 for(i=1;i<=4;i++)
                 {
                         if(c[i]==-1)
@@ -1553,6 +1596,7 @@ void crossDeal(int crossId)
                         }
                 }
 	}
+	return;
 }
 //panduan dao jishua shijian de car can go
 void carCanmove(int carId,int firstRoadid,int crossId)
@@ -1653,6 +1697,7 @@ void chuShihua()
 	{
 		carWait[i]=0;
 	}
+	return ;
 }
 
 int main(int argc,char *argv[])
@@ -1814,7 +1859,12 @@ int main(int argc,char *argv[])
 //guangdu sousuo
 //   struct runNote runQue[100000];//sui ditu gaibian
 
-    int runNum;
+//路径规划，采用距离进行规划，距离最短的方式
+//可以将路径规划时，统计路径上经过总车数，给予步同的权值
+//采用广度搜索的方式
+//可以不断迭代，自动算出每段路经过多少车，将车的密度作为一个权值加在道路上
+//有判题器就能做动态规划，我时间太短啊
+int runNum;
 for(i=0;i<carNum;i++)
 {
 //	head=1;
@@ -1824,16 +1874,42 @@ for(i=0;i<carNum;i++)
         tail--;
         while(head>1)
         {
-//	       cout<<runQue[tail].roadId<<' ';
                carRun[i].a[runNum]=runQue[tail].roadId;
                head=runQue[tail].f;
                tail=head;
                runNum++;
         }
         carRun[i].a[0]=runNum-1;
-//	cout<<endl;
 }
+//下一步调整权值，相当于给路一个长度的倍数，越稠密，路权值越大
+//统计每条路有多少辆车经过
+map<int,int>roadHave;
+for(i=0;i<roadNum;i++)
+{
+	roadHave.insert({road[i].roadId,0});
+}
+for(i=0;i<carNum;i++)
+{
+	for(j=carRun[i].a[0];j>=1;j--)
+	{
+		++roadHave.find(carRun[i].a[j])->second;
+	}
+}
+for(i=0;i<roadNum;i++)
+{
+	cout<<roadHave.find(road[i].roadId)->second<<endl;
+}
+//我怎么就不手动调参呢，啊啊啊啊啊啊
 
+
+
+
+
+//总结
+//这次很好的是我的架构还可以，能够适应变化，可以将自己的数据量放大
+//这次时间太短，7天时间学了很多，从没有发现自己这么短的时间能做这么多事情
+//在规划出最短路径后，采用了贪心进行每条路只允许一辆车通过，虽然成功，但算法复杂度过高，越到后面所需要算的数据量越大
+//最后两天准备采用动态规划的方式进行处理，但是时间太短，没有编好代码
 // the carPlantime
 // just kiding
 // //23333333
@@ -1846,7 +1922,7 @@ for(i=0;i<carNum;i++)
 */
 //kiding
 //my algo
-
+/*
 for(i=0;i<roadNum;i++){
 	if(road[i].roadIsduplex=1)
 	{
@@ -1863,6 +1939,8 @@ for(i=0;i<carNum;i++)
 {
 	tanxin(i,car[i].carPlantime);
 }
+
+*/
 //i is the  car's number
 /*
 int solve;//mark if all car arrive
@@ -1889,35 +1967,39 @@ int solve;//mark if all car arrive
 	cout<<roadHavecarft.count(5001);
 	roadHavecarft.erase(5000);
 	roadHavecarft.insert({5000,5});
-	*/
-/*
+
 int solve=1;//mark id all car arrive
-while(solve)
+for(;solve==1;)
 {
 	NOWTIME++;
-	cout<<NOWTIME;
+cout<<NOWTIME<<"cishu"<<endl;
 	solve=1;
-	chuShihua();
+	chuShihua();//mark the carWait==0;
 	// mark all car on road
 	//deal all can stop car
 	int roId=0;
 	for(j=0;j<roadNum;j++)
 	{
+cout<<j<<' ';
 		roId=road[j].roadId;
 		markCarcancross(roId);//1
 		markCarstop(roId);//2
 		dealMarkz(roId);//3
 	}
+cout<<endl;
 	//deal the all the cross
 	for(i=0;i<crossNum;i++)
 	{
+cout<<crossNum<<i<<' ';
 		crossDeal(cross[i].crossId);
 	}
+cout<<endl;
 	//deal the car have not on the road
 	int e=0;
 	int f=0;
 	for(i=0;i<carNum;i++)
 	{
+cout<<"car "<<i;
 		if(car[i].carPlantime==NOWTIME)
 		{
 			e=carRun[i].a[0];
@@ -1925,6 +2007,7 @@ while(solve)
 			carCanmove(i,f,car[i].carFrom);
 		}
 	}
+cout<<endl;
 	//is solve?
         for(j=0;j<roadNum;j++)
         {
@@ -1942,8 +2025,7 @@ while(solve)
 		}
         }
         if(solve==0)
-                break;//have done
-
+               break;//have done
 }
 */
 //233333
